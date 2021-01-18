@@ -1,3 +1,5 @@
+const aws = require('aws-sdk');
+
 //start connection
 var _ = require('lodash');
 var Handlebars = require('handlebars');
@@ -8,6 +10,41 @@ console.log("SUPPORTED lang: ", supportedLanguages.getSupportedLanguages());
 var res_glbl = {};
 var req_glbl = {};
 var autotranslate;
+
+// used by signS3Url helper
+function signS3URL(url, expireSecs) {
+    var bucket, key; 
+    if (url.search(/\/s3[.-](\w{2}-\w{4,9}-\d\.)?amazonaws\.com/) != -1) {
+      //bucket in path format
+      bucket = url.split('/')[3];
+      key = url.split('/').slice(4).join('/');
+    }
+    if (url.search(/\.s3[.-](\w{2}-\w{4,9}-\d\.)?amazonaws\.com/) != -1) {
+      //bucket in hostname format
+      let hostname = url.split("/")[2];
+      bucket = hostname.split(".")[0];
+      key = url.split('/').slice(3).join('/');
+    }
+    if (bucket && key) {
+        console.log("Attempt to convert S3 url to a signed URL: ",url);
+        console.log("Bucket: ", bucket, " Key: ", key) ;
+        try {
+            const s3 = new aws.S3() ;
+            const signedurl = s3.getSignedUrl('getObject', {
+                Bucket: bucket,
+                Key: key,
+                Expires: expireSecs
+            });
+            //console.log("Signed URL: ", signedurl);
+            url = signedurl;
+        } catch (err) {
+              console.log("Error signing S3 URL (returning original URL): ", err) ;
+        }
+    } else {
+        console.log("URL is not an S3 url - return unchanged: ",url);
+    }   
+    return url;
+}
 
 Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
     switch (operator) {
@@ -132,6 +169,13 @@ Handlebars.registerHelper('getSessionAttr', function (attr, def, options) {
     let v = _.get(res_glbl.session, attr, def);
     console.log("Return session attribute key, value: ", attr, v);
     return v;
+});
+
+Handlebars.registerHelper('signS3URL', function (s3url, options) {
+    let signedUrl = signS3URL(s3url, 300) ;
+    console.log("Return signed S3 URL: ", signedUrl);
+    // return SafeString to prevent unwanted url escaping
+    return new Handlebars.SafeString(signedUrl);
 });
 
 Handlebars.registerHelper('randomPick', function () {

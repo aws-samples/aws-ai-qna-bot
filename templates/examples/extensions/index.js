@@ -152,7 +152,7 @@ module.exports=Object.assign(
             ]
           }
         },
-        { 
+        {
           "PolicyName" : "LexQNALambda",
           "PolicyDocument" : {
           "Version": "2012-10-17",
@@ -163,8 +163,26 @@ module.exports=Object.assign(
                       "lex:PostText"
                    ],   
                   "Resource": [
-                      {"Fn::Join": ["",["arn:aws:lex:",{ "Ref" : "AWS::Region" },":",{ "Ref" : "AWS::AccountId" },":bot:*",":qna*"]]},
+                      {"Fn::Join": ["",["arn:aws:s3:::qnabot-kendra/*",{ "Ref" : "AWS::Region" },":",{ "Ref" : "AWS::AccountId" },":bot:*",":qna*"]]},
                       {"Fn::Join": ["",["arn:aws:lex:",{ "Ref" : "AWS::Region" },":",{ "Ref" : "AWS::AccountId" },":bot:*",":QNA*"]]},
+                  ]
+              }
+            ]
+          }          
+        },
+        { 
+          "PolicyName" : "S3QNABucketReadAccess",
+          "PolicyDocument" : {
+          "Version": "2012-10-17",
+            "Statement": [
+              {
+                  "Effect": "Allow",
+                  "Action": [
+                      "s3:GetObject"
+                   ],   
+                  "Resource": [
+                      "arn:aws:s3:::QNA*/*",
+                      "arn:aws:s3:::qna*/*"
                   ]
               }
             ]

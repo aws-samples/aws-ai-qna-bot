@@ -55,6 +55,7 @@ QnABot also provides these additional helpers:
 |getSessionAttr          | Returns named session attribute value if it is defined, or default value. | {{getSessionAttr '_attrName_' '_default_'}} |
 |setSessionAttr          | Sets a named session attribute to specified value. | {{setSessionAttr '_attrName_' '_value_'}} |
 |randomPick              | Randomly return a string selected from a list. | {{randomPick<br>"Greetings."<br>"Hi there!"<br>"Howdy"<br>"Hello, how are you?"<br>"Whassup dude!"<br>}}|
+|signS3URL               | Converts S3 URL to a signed URL with 300 sec expiration. S3 bucket name must start with QNA or qna, or policy granting bucket read access must be added to ESProxyLambdaRole. | {{signS3URL 'https://qnabot-images.s3.amazonaws.com/testimage.png'}}|
 
 ## Comments
 Use the handlebars comment syntax to make your handlebars easier to understand..
@@ -111,6 +112,13 @@ Previous answer was {{getSessionAttr 'qnabotcontext.previous.a' 'No previous res
    **Bold**  
    [this is a link](https://google.com)  
 {{/ifCond}}
+
+{{!-- Use S3 Signed URL as a hyperlink to document/image in S3 --}}
+{{!-- S3 bucket name must start with QNA or qna, otherwise bucket access must be granted to ESProxyLambdaRole in IAM --}}
+Here is a link to my S3 doc: [link]({{signS3URL 'https://qnabot-docs.s3.amazonaws.com/mydoc.pdf'}}) 
+
+{{!-- You can also generate a S3 signed URL as an Image URL for a Response Card --}}
+{{signS3URL 'https://qnabot-docs.s3.amazonaws.com/myimage.png'}}
 
 
 ```

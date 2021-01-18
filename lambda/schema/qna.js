@@ -82,7 +82,6 @@ module.exports={
                     type:"string",
                     description:"Optional",
                     title:"Card Image Url",
-                    format:'url',
                     maxLength:2000,
                     propertyOrder: 2
                 },
