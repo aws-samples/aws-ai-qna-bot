@@ -152,7 +152,7 @@ What if you want to ask the QnABot a question that is not present in the FAQs bu
 1. **THIS ASSUMES YOU HAVE COMPLETED PART 2 OF SECTION 1 (Create an Amazon Kendra index). If not, go back and complete those steps.**
 2. Create an S3 bucket and allow objects to be public read.
 
-    a. In the S3 console, click on **Create bucket** and entire a *Bucket name* such as qnabot-docs. Press **Next** until you get to *Set permissions* (Step 3).
+    a. In the S3 console, click on **Create bucket** and entire a *Bucket name* such as qnabot-docs (your bucket name should start with QNA or qna). Press **Next** until you get to *Set permissions* (Step 3).
     
     <img src="./s3_create_bucket.png?raw=true" width="300" height="100">
     <br>
@@ -164,7 +164,7 @@ What if you want to ask the QnABot a question that is not present in the FAQs bu
     
     c. Press **Next** until you **Create** the bucket.
     
-    d. **Upload** these PDFs into your new S3 bucket. Ensure that the objects are public read.
+    d. **Upload** these PDFs into your new S3 bucket. 
     
     - [solar_mysteries_book.pdf](./solar_mysteries_book.pdf)
 
