@@ -1,0 +1,56 @@
+h1 {
+	color: black;
+	text-align: left;
+	font-family: calibri;
+}
+
+p {
+	color: black;
+	text-align: left;
+	font-family: calibri;
+}
+
+
+.file_spec {
+	color: black;
+	text-align: left;
+	font-family: consolas;
+}
+
+
+.file_selector {
+	color: black;
+	text-align: left;
+	font-family: calibri;
+}
+
+button {
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+.progress_status {
+	color: black;
+	text-align: left;
+	font-family: calibri;
+}
+
+
+
+#divProgress {
+	color: blue;
+	text-align: left;
+	font-family: consolas;
+}
+
+.JSON_output {
+	color: blue;
+	text-align: left;
+	font-family: consolas;
+}
