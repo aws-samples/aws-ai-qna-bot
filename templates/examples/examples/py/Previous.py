@@ -58,7 +58,7 @@ def handler(event, context):
             event = updateResult(event,response)
                 # modify the event to make the previous question the redirected question that was just asked instead of "Next Question"
         else:
-            event["res"]["session"]["qnabotcontext"]["previous"] ={"qid":qidList,"a":navigationToJson["a"],"q":navigationToJson["q"]}
+            event["res"]["session"]["qnabotcontext"]["previous"] ={"qid":qidList,"q":navigationToJson["q"]}
             event["res"]["session"]["qnabotcontext"]["navigation"]={"next":navigationToJson["next"],"previous":[],"hasParent":navigationToJson["hasParent"]}
 
     print("OUTPUT: ",json.dumps(event))
@@ -126,7 +126,7 @@ def updateResult(event, response):
     tempList= navigationToJson["previous"]
     #shift to remove previous function name from list
     tempList.pop()
-    event["res"]["session"]["qnabotcontext"]["previous"] ={"qid":response["qid"],"a":response["a"],"alt":response.get("alt",{}),"q":event["req"]["question"]}
+    event["res"]["session"]["qnabotcontext"]["previous"] ={"qid":response["qid"],"q":event["req"]["question"]}
     event["res"]["session"]["qnabotcontext"]["navigation"]={"next":response["next"],"previous":tempList,"hasParent":navigationToJson["hasParent"]}
     return event
 

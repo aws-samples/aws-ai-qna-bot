@@ -56,7 +56,7 @@ def handler(event, context):
     else:
         #if the response has no answer we must have hit the end of the guided navigation for this segment
         #if unable to find anything, set the previous attribute back to the document qid that was previously returned,since we don't want this document to be in history
-        event["res"]["session"]["qnabotcontext"]["previous"]={"qid":qid,"a":previousToJson["a"],"q":previousToJson["q"]}
+        event["res"]["session"]["qnabotcontext"]["previous"]={"qid":qid,"q":previousToJson["q"]}
         event["res"]["session"]["qnabotcontext"]["navigation"]={"next":navigationToJson["next"],"previous":navigationToJson["previous"],"hasParent":navigationToJson["hasParent"]} 
     print(json.dumps(event))
     return event
@@ -110,7 +110,7 @@ def updateLambdaHook(event,hookEvent, response):
         tempList.pop(0)
     if "session" not in hookEvent["res"]:
         hookEvent["res"]["session"] = {}
-    hookEvent["res"]["session"]["qnabotcontext"]["previous"] ={"qid":response["qid"],"a":previousToJson["a"],"alt":previousToJson.get("alt",{}),"q":event["req"]["question"]}
+    hookEvent["res"]["session"]["qnabotcontext"]["previous"] ={"qid":response["qid"],"q":event["req"]["question"]}
     hookEvent["res"]["session"]["qnabotcontext"]["navigation"]={"next":response.get("next",""),"previous":tempList,"hasParent":False}
     return hookEvent
 
@@ -161,7 +161,7 @@ def updateResult(event, response):
     if len(tempList) > 10:
         #setting limit to 10 elements in previous stack since ,since lex has a max header size and we want to save that for other functions, same max size is set in the query lambda
         tempList.pop(0)
-    event["res"]["session"]["qnabotcontext"]["previous"] ={"qid":response["qid"],"a":previousToJson["a"],"alt":previousToJson.get("alt",{}),"q":event["req"]["question"]}
+    event["res"]["session"]["qnabotcontext"]["previous"] ={"qid":response["qid"],"q":event["req"]["question"]}
     event["res"]["session"]["qnabotcontext"]["navigation"]={"next":response.get("next",""),"previous":tempList,"hasParent":False} 
     return event
 

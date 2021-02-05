@@ -437,8 +437,6 @@ function update_res_with_hit(req, res, hit) {
     }
     _.set(res,"session.qnabotcontext.previous", {
         qid: _.get(res.result, "qid"),
-        a: _.get(res.result, "a"),
-        alt: _.get(res.result, "alt", {}),
         q: req.question
         }) ;
      _.set(res,"session.qnabotcontext.navigation", {

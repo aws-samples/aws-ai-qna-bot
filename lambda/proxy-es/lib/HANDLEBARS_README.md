@@ -88,7 +88,7 @@ Ask me a question. Try to stump me.
 {{/if}}
 
 {{!-- get nested Session Attribute, or default if attribute doesn't exist or is not defined --}}
-Previous answer was {{getSessionAttr 'qnabotcontext.previous.a' 'No previous response'}}
+Previous answer was qid: {{getSessionAttr 'qnabotcontext.previous.qid' 'No previous response'}}
 
 {{!-- pick a random answer from list below --}}
 {{randomPick 
