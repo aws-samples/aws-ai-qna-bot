@@ -1,4 +1,11 @@
-var lexConfig=require('./lex/config')
+var _ = require('lodash');
+
+var examples = _.fromPairs(require('../examples/outputs')
+  .names
+  .map(x => {
+    return [x, { "Fn::GetAtt": ["ExamplesStack", `Outputs.${x}`] }];
+  }));
+  
 module.exports={
     "ESProxyCodeVersion":{
         "Type": "Custom::S3Version",
@@ -183,10 +190,10 @@ module.exports={
             "S3ObjectVersion":{"Ref":"ESProxyCodeVersion"}
         },
         "Environment": {
-          "Variables": {
-            DEFAULT_SETTINGS_PARAM:{"Ref":"DefaultQnABotSettings"},
-            CUSTOM_SETTINGS_PARAM:{"Ref":"CustomQnABotSettings"},
-          }
+          "Variables": Object.assign({
+              DEFAULT_SETTINGS_PARAM:{"Ref":"DefaultQnABotSettings"},
+              CUSTOM_SETTINGS_PARAM:{"Ref":"CustomQnABotSettings"},
+          }, examples)
         },
         "Handler": "index.query",
         "MemorySize": "1408",
