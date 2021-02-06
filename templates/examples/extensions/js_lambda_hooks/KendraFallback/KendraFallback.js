@@ -450,7 +450,7 @@ async function routeKendraRequest(event, context) {
       });
     }
     
-    let idx=0;
+    let idx=foundAnswerCount;
     if (seenTop == false){
         helpfulDocumentsUris.forEach(function (element) {
             if (idx++ < maxDocumentCount-seenTop) {
@@ -515,5 +515,3 @@ exports.handler = async (event, context) => {
     console.log('context: ' + JSON.stringify(context, null, 2));
     return routeKendraRequest(event, context);
 };
-
-
