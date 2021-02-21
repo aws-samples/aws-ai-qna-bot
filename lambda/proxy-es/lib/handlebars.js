@@ -201,6 +201,7 @@ var apply_handlebars = async function (req, res, hit) {
         Settings: req._settings,
         Question: req.question,
         OrigQuestion: _.get(req,"_event.origQuestion",req.question),
+        PreviousQuestion: _.get(req, "session.qnabotcontext.previous.q", false),
         Sentiment: req.sentiment,
     };
     // Autotranslation enabled by default.. will be disabled when handlebars finds explicit language match block.

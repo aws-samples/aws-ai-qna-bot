@@ -321,6 +321,7 @@ async function evaluateConditionalChaining(req, res, hit, conditionalChaining) {
             Settings: req._settings,
             Question: req.question,
             OrigQuestion: _.get(req,"_event.origQuestion",req.question),
+            PreviousQuestion: _.get(req, "session.qnabotcontext.previous.q", false),
             Sentiment: req.sentiment,
         };
         console.log("Evaluating:", conditionalChaining);
