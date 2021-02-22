@@ -31,4 +31,3 @@ exports.query=function(event,context,callback){
     .catch(callback)
 }
 
-

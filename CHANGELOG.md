@@ -1,3 +1,13 @@
+## [4.4.0]
+- New Personally Identifiable Information (PII) Rejection support using the setting PII_REJECTION_ENABLED. Use the PII_REJECTION_QUESTION setting to direct 
+QnABot to respond when it detects PII.  QnABot will use the PII_REJECTION_REGEX to find matching PII patterns and if PII_REJECTION_WITH_COMPREHEND is set to true, it will also use [Amazon Comprehend](https://aws.amazon.com/blogs/machine-learning/detecting-and-redacting-pii-using-amazon-comprehend/) to find PII. -
+## [4.3.2]
+- Bug fixes for Kendra FAQ integration 
+- Support lengthy answer definition for Kendra FAQ
+- Check of FAQ deletion in Kendra when FAQ content is being resynced
+- Support multiple responses when using Test in content designer with Kendra FAQ enabled
+- Fix for exception - "Cannot convert undefined or null to object" when Session Attributes are no provided during Lex input. https://github.com/aws-samples/aws-ai-qna-bot/issues/229
+- Package version updates to address current github dependabot alerts
 ## [4.4.1]
 - Fix for Designer UI from breaking change in highlight.js due to dependabot alert / change.
 - Added support for setting 'profile' as an identity attribute from cognito federation. 

@@ -115,6 +115,23 @@ module.exports={
             method:'delete'
         })
     },
+    getTerminologies(context, opts) {
+        return context.dispatch("_request", {
+          url: context.rootState.info._links.translate.href + "/list",
+          method: "post",
+        });
+      },
+    startImportTranslate(context,opts){
+        return context.dispatch('_request',{
+            url:context.rootState.info._links.translate.href + "/import",
+            method:'post',
+            body: 
+            {"name":opts.name,
+             "description":opts.description,
+             "file": opts.file
+            }
+        })
+    },
 }
 
 

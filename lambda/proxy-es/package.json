@@ -6,16 +6,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.827.0",
     "aws4": "^1.6.0",
     "axios": "^0.19.0",
     "bluebird": "^3.5.1",
     "bodybuilder": "^2.2.7",
     "cfn-lambda": "^4.0.0",
     "handlebars": "^4.7.2",
+    "intercept-stdout": "^0.1.2",
     "mocha": "^8.0.1",
     "safe-eval": "^0.4.1",
-    "simple-encryptor": "^3.0.0",
-    "intercept-stdout": "^0.1.2"
+    "simple-encryptor": "^3.0.0"
   },
   "scripts": {
     "test": "mocha --timeout 100000"

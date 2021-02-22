@@ -157,14 +157,22 @@ We are currently working on adding Microsoft Edge support.
 See the [LICENSE.md](LICENSE.md) file for details
 
 ## New features 
-
-### Verson 4.4.0
+### Version 4.4.0
+- Personally Identifiable Information (PII) recognition using Comprehend
 - Preview VPC support - [readme](./VPCSupportREADME.md)
 - Preview BotRouter support - [read](./BotRoutingREADME.md)  
 - Upgrade to Elasticsearch service version 7.9
 - Slack client support via Lex with Slack specific markdown support
 - Added support for Alexa re-prompt functionality  
+- Added Translation support for Kendra
+- Added Kendra web page indexing
+- Added better handling for contractions (e.g. "can't","I'm","you're")
 - Bug fixes and defect enhancements
+
+QnABot can now recognize and respond  when it detects PII.  QnABot will use the PII_REJECTION_REGEX to find matching PII patterns and if PII_REJECTION_WITH_COMPREHEND is set to true, it will also use [Amazon Comprehend](https://aws.amazon.com/blogs/machine-learning/detecting-and-redacting-pii-using-amazon-comprehend/) to find PII. 
+
+You can tell QnABot to accept certain types of PII by setting PII_REJECTION_IGNORE_TYPES.
+
 
 VPC support is enabled in beta mode through a new template available in the distribution repos. Please understand
 the content in [readme](./VPCSupportREADME.md) before proceeding with this type of deployment. 
@@ -179,6 +187,34 @@ connectivity on port 443. The Elasticsearch cluster and all Lambdas will be atta
 Designer UI is still available outside of the VPC but requires login via the Cognito user pool. The Elasticsearch
 cluster will not be available externally. Users wishing to use the Kibana console will need VPN connectivity to the 
 VPC and is outside the scope of this document.   
+
+QnABot now supports indexing web pages into Kendra. Added three settings parameters:
+
+* KENDRA_INDEXER_URLS - a comma separated list of URLs which should be included in your Kendra index.
+* KENDRA_INDEXER_SCHEDULER - specify how often you would like QnABot to re-index the list of URLs. The expression should use 
+[AWS CloudWatch rate expressions](https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents-expressions.html) 
+* KENDRA_WEB_PAGE_INDEX - The Kendra Index Id where Kendra should add the custom data soutce 
+* ENABLE_KENDRA_WEB_INDEXING - when the value is true and the other values are set, QnABot will index the list of URLs specified.  It can index HTML and PDF pages
+
+There is also a new menu option, "Kendra Web Page Indexer" which allows you to initiate a re-index.
+
+Support has been added for [Amazon Translate custom terminology](https://docs.aws.amazon.com/translate/latest/dg/how-custom-terminology.html).
+
+Using custom terminology with your translation requests enables you to make sure that your brand names, character names, model names, and other unique content is translated exactly the way you need it, regardless of its context and the Amazon Translate algorithm’s decision.
+
+A new option has been added under the "Tools" menu - "Import Custom Translation".  While QnABot supports any installed custom terminology you have in your account,
+import only supports custom terminology files in CSV format (https://docs.aws.amazon.com/translate/latest/dg/creating-custom-terminology.html).
+
+Two settings have been added:
+
+* ENABLE_CUSTOM_TERMINOLOGY - when the value is "true", QnABot will use installed custom terminologies for both questions and answers.
+* CUSTOM_TERMINOLOGY_SOURCES -  if left blank, all custom terminologies in your account will be used.  If you specify one or more custom terminologies separated by spaces, only the terminology files specified will be used.
+
+Improved handling for contractions.
+
+QnABot uses Amazon Comprehend to understand parts of speech.  Contractions like "can't","you're","I'm", and were not parsed correctly.  
+
+A new setting has been added  - ES_EXPAND_CONTRACTIONS - which can be used to specify contractions and their expanded forms.  QnaBot will expand the contractions before the question is processed by Comprehend.
 
 ### Version 4.3.0
 - New Connect Wizard available in the Content Designer UI to assist integration with a Connect Contact Flow.

@@ -1,10 +1,73 @@
 var _=require('lodash');
 var translate = require('./multilanguage.js');
 
+async function get_terminologies(sourceLang,allowedList =[]){
+    const translate = new AWS.Translate();
+        allowedList = allowedList.filter(a => a.length > 0)
+        console.log("Getting registered custom terminologies")
+
+        var configuredTerminologies = await  translate.listTerminologies({}).promise()
+
+
+
+        console.log("terminology response " + JSON.stringify(configuredTerminologies))
+        var sources = configuredTerminologies["TerminologyPropertiesList"].filter(t => t["SourceLanguageCode"] == sourceLang).map(s => s.Name);
+        console.log("Filtered Sources " + JSON.stringify(sources))
+        if(allowedList.length != 0){
+            sources = _.intersection(sources,allowedList)
+        }
+
+        return sources
+
+
+}
+
+async function get_translation(inputText, sourceLang, targetLang,req ) {
+    var customTerminologyEnabled = _.get(req._settings,"ENABLE_CUSTOM_TERMINOLOGY") == true;
+    var customTerminologies = _.get(req._settings,"CUSTOM_TERMINOLOGY_SOURCES","").split(",");
+
+    const params = {
+        SourceLanguageCode: sourceLang, /* required */
+        TargetLanguageCode: targetLang, /* required */
+        Text: inputText, /* required */
+    };
+    console.log("get_translation:", targetLang, "InputText: ", inputText);
+    if (targetLang === sourceLang) {
+        console.log("get_translation: source and target are the same, translation not required.");
+        const res = {};
+        return inputText;
+    }
+    if(customTerminologyEnabled){
+
+
+        console.log("Custom terminology enabled")
+        customTerminologies = await get_terminologies(sourceLang,customTerminologies)
+        if(customTerminologies.length == 0){
+            console.log("Warning: ENABLE_CUSTOM_TERMINOLOGY is set to true, but no matching entries found for CUSTOM_TERMINOLOGY_SOURCES ")
+        }else{
+            console.log("Using custom terminologies " + JSON.stringify(customTerminologies))
+            params["TerminologyNames"] = customTerminologies;
+        }
+    }
+
+    const translateClient = new AWS.Translate();
+    try {
+        console.log("Fullfilment params " + JSON.stringify(params))
+        const translation = await translateClient.translateText(params).promise();
+        console.log("Translation response " + JSON.stringify(translation))
+        return translation.TranslatedText;
+    } catch (err) {
+        console.log("warning - error during translation. Returning: " + inputText);
+        const res = {};
+        res.TranslatedText = inputText;
+        return res;
+    }
+}
+
 async function get_welcome_message(req, locale){
     const welcome_message = _.get(req,'_settings.DEFAULT_ALEXA_LAUNCH_MESSAGE', 'Hello, Please ask a question');
     if (_.get(req._settings, 'ENABLE_MULTI_LANGUAGE_SUPPORT')){
-        return await translate.translateText(welcome_message,'en',locale);
+        return await get_translation(welcome_message,'en',locale,req)
     } else {
         return welcome_message;
     }
@@ -12,7 +75,7 @@ async function get_welcome_message(req, locale){
 async function get_stop_message(req, locale){
     const stop_message = _.get(req,'_settings.DEFAULT_ALEXA_STOP_MESSAGE', 'Goodbye');
     if (_.get(req._settings, 'ENABLE_MULTI_LANGUAGE_SUPPORT')){
-        return await translate.translateText(stop_message,'en',locale); 
+        return await get_translation(stop_message,'en',locale,req)
     } else {
         return stop_message;
     }

@@ -14,15 +14,20 @@ var kendra = require('./kendraQuery');
 var key = _.get(process.env, "DEFAULT_SETTINGS_PARAM", "fdsjhf98fd98fjh9 du98fjfd 8ud8fjdf");
 var encryptor = require('simple-encryptor')(key);
 
+
+
 async function run_query(req, query_params) {
     var onlyES = await isESonly(req, query_params);
-    
+    let response = "";
     // runs kendra query if question supported on Kendra and KENDRA_FAQ_INDEX is set
-    if (!onlyES && _.get(req, "_settings.KENDRA_FAQ_INDEX")!=""){
-        return await run_query_kendra(req, query_params);
-    } else {
-        return await run_query_es(req, query_params);
+   if (!onlyES && _.get(req, "_settings.KENDRA_FAQ_INDEX")!=""){
+        response= await run_query_kendra(req, query_params);
+    } 
+    else {
+        response= await run_query_es(req, query_params);
     }
+    console.log(`response ${JSON.stringify(response)}` )
+    return response;
 }
 
 async function isESonly(req, query_params) {
@@ -40,6 +45,10 @@ async function isESonly(req, query_params) {
     // setting topics is ES only
     if (_.get(query_params, 'topic')!="") {
         return true
+    }
+    //Don't send one word questions to Kendra
+    if(query_params.question.split(" ").length  < 2){
+        return true;
     }
     return false;
 }
@@ -162,6 +171,8 @@ async function get_hit(req, res) {
         syntax_confidence_limit: _.get(req, '_settings.ES_SYNTAX_CONFIDENCE_LIMIT'),
         score_answer_field: _.get(req, '_settings.ES_SCORE_ANSWER_FIELD'),
         fuzziness: _.get(req, '_settings.ES_USE_FUZZY_MATCH'),
+        es_expand_contractions: _.get(req,'_settings.ES_EXPAND_CONTRACTIONS')
+
     };
     var no_hits_question = _.get(req, '_settings.ES_NO_HITS_QUESTION', 'no_hits');
     var response = await run_query(req, query_params);
@@ -357,7 +368,7 @@ module.exports = async function (req, res) {
             usrLang = _.get(req, 'session.userLocale');
             if (usrLang != 'en') {
                 console.log("Autotranslate hit to usrLang: ", usrLang);
-                hit = await translate.translate_hit(hit, usrLang);
+                hit = await translate.translate_hit(hit, usrLang,req);
             } else {
                 console.log("User Lang is en, Autotranslate not required.");
             }

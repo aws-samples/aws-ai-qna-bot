@@ -34,13 +34,13 @@ module.exports={
     "VPCSecurityGroupIdList": {"Type": "String"},
     "XraySetting": {"Type": "String"}
   },
-  "Conditions": {
+   "Conditions": {
     "VPCEnabled": { "Fn::Not": [
         { "Fn::Equals": [ "", { "Ref": "VPCSecurityGroupIdList" } ] }
       ] },
     "XRAYEnabled":{"Fn::Equals":[{"Ref":"XraySetting"},"TRUE"]},
+    }
   }
-}
 
 
 

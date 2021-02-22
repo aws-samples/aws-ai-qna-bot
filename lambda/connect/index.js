@@ -46,7 +46,7 @@ exports.handler =  async function(event, context) {
     let flow = JSON.parse(rawdata);
     let userInputModules = flow["modules"]
         .filter(module => module.type == "GetUserInput")
-        .filter(module => module.parameters.filter(parameter => parameter.name == "BotName").length > 0)
+        .filter(module => module.parameters.filter(parameter => parameter.name == "BotName" || parameter.name == "BotRegion").length > 0)
         .filter(module => module.branches.filter(branch => branch.condition == "Evaluate" 
                                                         && branch.conditionValue 
                                                         && branch.conditionValue.includes("fulfilment_Intent")).length > 0)
@@ -55,6 +55,8 @@ exports.handler =  async function(event, context) {
 
             botParm = element.parameters.find(parm => parm.name == "BotName" )
             botParm.value = process.env.lexBot;
+            region = element.parameters.find(parm => parm.name == "BotRegion")
+            region.value = process.env.AWS_REGION;
             botBranchesIntent = element.branches.find(parm => parm.conditionValue && parm.conditionValue.startsWith("fulfilment_Intent"));
             botBranchesIntent.conditionValue = process.env.intent;
             botBranchesFallbackIntent = element.branches.find(parm => parm.conditionValue && parm.conditionValue.includes("fallbackfulfilment_Intent"));
@@ -81,15 +83,10 @@ exports.handler =  async function(event, context) {
 
     };
   }
-  // process.env.lexBot = 'QNAVpcSupport_dev_dev_master_three_VATdO'
-  // process.env.intent = 'fulfilment_IntentdgGRQJbPjf'
-  // process.env.fallBackIntent = 'qnabotfallbackfulfilment_IntentZpZuraZhd'
-  // process.env.outputBack = 'qnavpcsupport-dev-dev-master-3-exportbucket-1gefbpnc1o2hj'
-  // process.env.s3Prefix = 'connect/'
-  
 
-  // createCallFlow().then(result => {
-  //   console.log(JSON.stringify(result.CallFlow,null,4))
- //});
 
  
+// (async () => {
+//   process.env.AWS_REGION = "us-west-2"
+//   var result = await createCallFlow()
+// })()

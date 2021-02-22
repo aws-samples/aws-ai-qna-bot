@@ -13,6 +13,7 @@
     "UserPool":"${UserPool}",
     "DefaultQnABotSettings":"${DefaultQnABotSettings}",
     "CustomQnABotSettings":"${CustomQnABotSettings}",
+    "KendraCrawlerSnsTopic":"${KendraCrawlerSnsTopic}",
     "Id":"$stageVariables.Id",
     "_links":{
         "root":{
@@ -20,6 +21,9 @@
         },
         "questions":{
             "href":"$root/questions"
+        },        
+        "crawler":{
+            "href":"$root/crawler"
         },
         "bot":{
             "href":"$root/bot"
@@ -29,6 +33,9 @@
         },
         "connect":{
             "href":"$root/connect"
+        },
+        "translate":{
+            "href":"$root/translate"
         },
         "examples":{
             "href":"$root/examples/documents"

@@ -64,13 +64,13 @@ async function translate_res(req, res){
  *
  * The response json payload should conform to the following
  *
- * { 	response: "message", "othersTBD"
+ * {	response: "message", "othersTBD"
  *	    status: "success", "failed"
  *	    message: <String>,
  *      messageFormat:  "PlainText", "CustomPayload", "SSML", "Composite"
  *	    sessionAttributes: Object,
  *	    sessionAttributes.appContext.altMessages.ssml: <String>,
- *      sessionAttributes.appContext.altMessages.markdown: <String> 
+ *      sessionAttributes.appContext.altMessages.markdown: <String>
  * }
  *
  * @param name

@@ -30,9 +30,11 @@ module.exports={
         "ApiDeploymentId":{"Type":"String"},
         "DefaultQnABotSettings": {"Type":"String"},
         "CustomQnABotSettings": {"Type":"String"},
+        "KendraCrawlerSnsTopic":{"Type":"String"},
         "VPCSubnetIdList" : {"Type": "String"},
         "VPCSecurityGroupIdList": {"Type": "String"},
-        "XraySetting": {"Type": "String"}
+        "XraySetting": {"Type": "String"},
+        "KendraCrawlerSnsTopic":{"Type":"String"}
     },
     "Conditions": {
         "VPCEnabled": { "Fn::Not": [
@@ -41,3 +43,4 @@ module.exports={
         "XRAYEnabled":{"Fn::Equals":[{"Ref":"XraySetting"},"TRUE"]},
     }
 }
+

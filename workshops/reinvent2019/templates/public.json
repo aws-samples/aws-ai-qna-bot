@@ -1475,7 +1475,21 @@
           "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
           {"Ref": "QueryPolicy"}
         ]
-      }
+      },
+      "Policies": [
+        {
+          "PolicyName": "ComprehendPolicy",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Effect": "Allow",
+              "Action": ["comprehend:DetectPiiEntities"],
+              "Resource": "*"
+            }]
+          }
+        }
+      ]
+
     },
     "LexBuildLambda": {
       "Type": "AWS::Lambda::Function",

@@ -33,6 +33,10 @@ module.exports={
             name:"import",
             component:require('../components/import.vue').default
         },
+        {   path:'/customTranslate',
+            name:"customTranslate",
+            component:require('../components/customTranslate.vue').default
+        },
         {   path:'/export',
             name:"export",
             component:require('../components/export.vue').default

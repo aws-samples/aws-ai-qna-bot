@@ -30,6 +30,7 @@ var aws=require('aws-sdk')
 
 var failed=false
 module.exports=Object.assign(
+    require('./kendraIndex'),
     require('./export'),
     require('./import'),
     require('./settings'),

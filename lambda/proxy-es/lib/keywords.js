@@ -26,7 +26,11 @@ function get_keywords_from_comprehend(params) {
                 if (stopwords.split(",").indexOf(syntaxtoken.Text.toLowerCase()) == -1) {
                     if (syntaxtoken.PartOfSpeech.Score >= syntax_confidence_limit) {
                         console.log("+KEYWORD: " + syntaxtoken.Text);
-                        keywords = keywords + syntaxtoken.Text + " ";
+                        if(!(syntaxtoken.Text.startsWith("'") || syntaxtoken.Text.startsWith("`"))){
+                            keywords = keywords + syntaxtoken.Text + " ";
+                        }else{
+                            console.log("Not including " + syntaxtoken.Text)
+                        }
                     } else {
                         console.log("X score < ", syntax_confidence_limit, " (threshold)");
                     }
@@ -44,6 +48,31 @@ function get_keywords_from_comprehend(params) {
 }
 
 function get_keywords(params) {
+    try{
+        var contraction_list = JSON.parse(params.es_expand_contractions)
+
+    }catch{
+        contraction_list = {}
+    }
+    var new_question = "";
+    var new_word= ""
+    for(var word of params.question.split(" "))
+    {
+        for(var contraction in contraction_list )
+        {
+            if(word.toLowerCase() == contraction.toLowerCase() || word.toLowerCase() == contraction.toLowerCase().replace("'","’")){
+                new_word = contraction_list[contraction];
+                break;
+            }else{
+                new_word = word
+            }
+        }
+        new_question += " " + new_word 
+    }
+    console.log("Question after expansion " + new_question)
+    params.question = new_question
+
+
     if (_.get(params,'use_keyword_filters')) {
         console.log("use_keyword_filters is true; detecting keywords from question using Comprehend");
         return get_keywords_from_comprehend(params);
@@ -57,10 +86,3 @@ module.exports=function(params){
     return get_keywords(params);
 };
 
-
-/*
-var testparams = {
-    question: "what is an example user question",
-};
-get_keywords(testparams);
-*/

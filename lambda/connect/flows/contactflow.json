@@ -1,1 +1,417 @@
-{"modules":[{"id":"5d04600d-74e5-4799-a6ab-4ab65962f229","type":"SetLoggingBehavior","branches":[{"condition":"Success","transition":"df35a20f-0d7f-4bb2-b8e4-fa5510708371"}],"parameters":[{"name":"LoggingBehavior","value":"Enable"}],"metadata":{"position":{"x":75,"y":158.99999198913582}}},{"id":"df35a20f-0d7f-4bb2-b8e4-fa5510708371","type":"SetVoice","branches":[{"condition":"Success","transition":"3f3d91aa-e448-4119-9e93-69ef25719713"}],"parameters":[{"name":"GlobalVoice","value":"Matthew"},{"name":"GlobalEngine","value":"Neural"},{"name":"SpeakingStyle","value":"Conversational"}],"metadata":{"position":{"x":78,"y":324.9999919891359}}},{"id":"3f3d91aa-e448-4119-9e93-69ef25719713","type":"SetAttributes","branches":[{"condition":"Success","transition":"c0a4597f-c841-4cce-9629-61658abff0b5"},{"condition":"Error","transition":"c0a4597f-c841-4cce-9629-61658abff0b5"}],"parameters":[{"name":"Attribute","value":"Ask another question or say return to main menu","key":"defaultPrompt","namespace":null}],"metadata":{"position":{"x":76,"y":500.9999965667725}}},{"id":"e1af26b7-2f37-445f-8c7b-3791bf214eda","type":"PlayPrompt","branches":[{"condition":"Success","transition":"bf5ece6b-6ebb-4a59-bd9b-15e45d2b0993"}],"parameters":[{"name":"Text","value":"This is where I would route you into an agent.","namespace":null},{"name":"TextToSpeechType","value":"text"}],"metadata":{"position":{"x":1391,"y":23.99999656677248},"useDynamic":false}},{"id":"d26a2c6b-e9ff-474e-a4e5-14d8175e7bce","type":"PlayPrompt","branches":[{"condition":"Success","transition":"bf5ece6b-6ebb-4a59-bd9b-15e45d2b0993"}],"parameters":[{"name":"Text","value":"Thank you for using QnA Bot, Goodbye","namespace":null},{"name":"TextToSpeechType","value":"text"}],"metadata":{"position":{"x":1391,"y":326.9999965667725},"useDynamic":false}},{"id":"bb036f1e-bdfa-4c37-a56f-d24d75ef5551","type":"PlayPrompt","branches":[{"condition":"Success","transition":"bf5ece6b-6ebb-4a59-bd9b-15e45d2b0993"}],"parameters":[{"name":"Text","value":"This is embarrassing. I'm sorry I don't know the answer to your questions.  I'm still learning, so check back tomorrow.","namespace":null},{"name":"TextToSpeechType","value":"text"}],"metadata":{"position":{"x":1399,"y":496.9999965667725},"useDynamic":false}},{"id":"bf5ece6b-6ebb-4a59-bd9b-15e45d2b0993","type":"Disconnect","branches":[],"parameters":[],"metadata":{"position":{"x":1626,"y":214}}},{"id":"5d762456-76cb-4578-9c1f-4e5d79865754","type":"CheckAttribute","branches":[{"condition":"Evaluate","conditionType":"Equals","conditionValue":"AGENT","transition":"e1af26b7-2f37-445f-8c7b-3791bf214eda"},{"condition":"Evaluate","conditionType":"Equals","conditionValue":"MENU","transition":"bea09cee-1c9c-4a4b-917c-969c7dbdfd92"},{"condition":"Evaluate","conditionType":"Equals","conditionValue":"END","transition":"d26a2c6b-e9ff-474e-a4e5-14d8175e7bce"},{"condition":"NoMatch","transition":"1d0febd1-8929-464d-b677-c439c70e0e54"}],"parameters":[{"name":"Attribute","value":"nextAction"},{"name":"Namespace","value":"Lex.SessionAttributes"}],"metadata":{"position":{"x":1103,"y":15},"conditionMetadata":[{"id":"21641be9-6bc6-48e0-b69c-e92b31220b54","operator":{"name":"Equals","value":"Equals","shortDisplay":"="},"value":"AGENT"},{"id":"9bcad39b-8988-4451-88cb-74dd951037af","operator":{"name":"Equals","value":"Equals","shortDisplay":"="},"value":"MENU"},{"id":"52af6a30-1f2b-4def-99c7-06a7fb541287","operator":{"name":"Equals","value":"Equals","shortDisplay":"="},"value":"END"}]}},{"id":"bea09cee-1c9c-4a4b-917c-969c7dbdfd92","type":"PlayPrompt","branches":[{"condition":"Success","transition":"bf5ece6b-6ebb-4a59-bd9b-15e45d2b0993"}],"parameters":[{"name":"Text","value":"This is where I'd route to a main menu.","namespace":null},{"name":"TextToSpeechType","value":"text"}],"metadata":{"position":{"x":1391,"y":176.9999965667725},"useDynamic":false}},{"id":"7f6a465d-c876-4e08-b087-155b544bce7f","type":"CheckAttribute","branches":[{"condition":"Evaluate","conditionType":"Equals","conditionValue":"true","transition":"5d762456-76cb-4578-9c1f-4e5d79865754"},{"condition":"NoMatch","transition":"151ea3ec-6546-440a-ab9e-5538d862fd52"}],"parameters":[{"name":"Attribute","value":"qnabot_gotanswer"},{"name":"Namespace","value":"Lex.SessionAttributes"}],"metadata":{"position":{"x":861,"y":99},"conditionMetadata":[{"id":"99f8585b-b71b-406c-b9ca-07cccdeb391b","operator":{"name":"Equals","value":"Equals","shortDisplay":"="},"value":"true"}]}},{"id":"151ea3ec-6546-440a-ab9e-5538d862fd52","type":"Loop","branches":[{"condition":"Looping","transition":"1d0febd1-8929-464d-b677-c439c70e0e54"},{"condition":"Complete","transition":"bb036f1e-bdfa-4c37-a56f-d24d75ef5551"}],"parameters":[{"name":"LoopCount","value":"2"}],"metadata":{"position":{"x":1102,"y":296},"useDynamic":false}},{"id":"c0a4597f-c841-4cce-9629-61658abff0b5","type":"SetAttributes","branches":[{"condition":"Success","transition":"03d86415-cfef-4b8c-860f-c75946f4ba1f"},{"condition":"Error","transition":"03d86415-cfef-4b8c-860f-c75946f4ba1f"}],"parameters":[{"name":"Attribute","value":"Hello. Welcome to QnA bot.  Ask me a question.","key":"prompt","namespace":null}],"metadata":{"position":{"x":372,"y":78.99999656677248}}},{"id":"1d0febd1-8929-464d-b677-c439c70e0e54","type":"SetAttributes","branches":[{"condition":"Success","transition":"03d86415-cfef-4b8c-860f-c75946f4ba1f"},{"condition":"Error","transition":"03d86415-cfef-4b8c-860f-c75946f4ba1f"}],"parameters":[{"name":"Attribute","value":"connect_nextPrompt","key":"prompt","namespace":"Lex.SessionAttributes"}],"metadata":{"position":{"x":389,"y":277}}},{"id":"03d86415-cfef-4b8c-860f-c75946f4ba1f","type":"GetUserInput","branches":[{"condition":"Evaluate","conditionType":"Equals","conditionValue":"fulfilment_IntentAFnIErtGMZ","transition":"7f6a465d-c876-4e08-b087-155b544bce7f"},{"condition":"Evaluate","conditionType":"Equals","conditionValue":"qnabotfallbackfulfilment_IntentwMKVoiQir","transition":"7f6a465d-c876-4e08-b087-155b544bce7f"},{"condition":"NoMatch","transition":"7f6a465d-c876-4e08-b087-155b544bce7f"},{"condition":"Error","transition":"151ea3ec-6546-440a-ab9e-5538d862fd52"}],"parameters":[{"name":"Text","value":"prompt","namespace":"User Defined"},{"name":"TextToSpeechType","value":"text"},{"name":"BotName","value":"QNAVpcSupport_dev_dev_master_twooneiYRBP"},{"name":"BotAlias","value":"live"},{"name":"BotRegion","value":"us-east-1"},{"name":"Parameter","key":"x-amz-lex:barge-in-enabled:*:*","value":"true","namespace":null},{"name":"Parameter","key":"isConnectChannel","value":"Channel","namespace":"System"},{"name":"Parameter","key":"connectContactId","value":"ContactId","namespace":"System"},{"name":"Parameter","key":"connect_nextPrompt","value":"defaultPrompt","namespace":"User Defined"},{"name":"Parameter","key":"topic","value":"topic","namespace":"Lex.SessionAttributes"},{"name":"Parameter","key":"qnabotcontext","value":"qnabotcontext","namespace":"Lex.SessionAttributes"}],"metadata":{"position":{"x":636,"y":108},"conditionMetadata":[{"id":"6b7c2836-fec7-46a5-8aa8-5023a063a981","value":"fulfilment_IntentAFnIErtGMZ"},{"id":"7d5d1433-5b1e-40eb-bee2-a6963595872c","value":"qnabotfallbackfulfilment_IntentwMKVoiQir"}],"useDynamic":true,"dynamicMetadata":{"x-amz-lex:barge-in-enabled:*:*":false,"isConnectChannel":true,"connectContactId":true,"connect_nextPrompt":true,"topic":true,"qnabotcontext":true}},"target":"Lex"}],"version":"1","type":"contactFlow","start":"5d04600d-74e5-4799-a6ab-4ab65962f229","metadata":{"entryPointPosition":{"x":14.999982102400423,"y":14.999981265496906},"snapToGrid":false,"name":"qna-sample","description":null,"type":"contactFlow","status":"saved","hash":"41c0a8ada7933fe006f26f83239c0753a86eda8f2d20084542a2cc2f4300e143"}}
+{
+  "modules": [
+    {
+      "id": "5d04600d-74e5-4799-a6ab-4ab65962f229",
+      "type": "SetLoggingBehavior",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "df35a20f-0d7f-4bb2-b8e4-fa5510708371"
+        }
+      ],
+      "parameters": [{ "name": "LoggingBehavior", "value": "Enable" }],
+      "metadata": { "position": { "x": 75, "y": 158.99999198913582 } }
+    },
+    {
+      "id": "df35a20f-0d7f-4bb2-b8e4-fa5510708371",
+      "type": "SetVoice",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "3f3d91aa-e448-4119-9e93-69ef25719713"
+        }
+      ],
+      "parameters": [
+        { "name": "GlobalVoice", "value": "Matthew" },
+        { "name": "GlobalEngine", "value": "Neural" },
+        { "name": "SpeakingStyle", "value": "Conversational" }
+      ],
+      "metadata": { "position": { "x": 78, "y": 324.9999919891359 } }
+    },
+    {
+      "id": "3f3d91aa-e448-4119-9e93-69ef25719713",
+      "type": "SetAttributes",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "c0a4597f-c841-4cce-9629-61658abff0b5"
+        },
+        {
+          "condition": "Error",
+          "transition": "c0a4597f-c841-4cce-9629-61658abff0b5"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "Ask another question or say return to main menu",
+          "key": "defaultPrompt",
+          "namespace": null
+        }
+      ],
+      "metadata": { "position": { "x": 76, "y": 500.9999965667725 } }
+    },
+    {
+      "id": "e1af26b7-2f37-445f-8c7b-3791bf214eda",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "bf5ece6b-6ebb-4a59-bd9b-15e45d2b0993"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "This is where I would route you into an agent.",
+          "namespace": null
+        },
+        { "name": "TextToSpeechType", "value": "text" }
+      ],
+      "metadata": {
+        "position": { "x": 1391, "y": 23.99999656677248 },
+        "useDynamic": false
+      }
+    },
+    {
+      "id": "d26a2c6b-e9ff-474e-a4e5-14d8175e7bce",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "bf5ece6b-6ebb-4a59-bd9b-15e45d2b0993"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "Thank you for using QnA Bot, Goodbye",
+          "namespace": null
+        },
+        { "name": "TextToSpeechType", "value": "text" }
+      ],
+      "metadata": {
+        "position": { "x": 1391, "y": 326.9999965667725 },
+        "useDynamic": false
+      }
+    },
+    {
+      "id": "bb036f1e-bdfa-4c37-a56f-d24d75ef5551",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "bf5ece6b-6ebb-4a59-bd9b-15e45d2b0993"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "This is embarrassing. I'm sorry I don't know the answer to your questions.  I'm still learning, so check back tomorrow.",
+          "namespace": null
+        },
+        { "name": "TextToSpeechType", "value": "text" }
+      ],
+      "metadata": {
+        "position": { "x": 1399, "y": 496.9999965667725 },
+        "useDynamic": false
+      }
+    },
+    {
+      "id": "bf5ece6b-6ebb-4a59-bd9b-15e45d2b0993",
+      "type": "Disconnect",
+      "branches": [],
+      "parameters": [],
+      "metadata": { "position": { "x": 1626, "y": 214 } }
+    },
+    {
+      "id": "5d762456-76cb-4578-9c1f-4e5d79865754",
+      "type": "CheckAttribute",
+      "branches": [
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "AGENT",
+          "transition": "e1af26b7-2f37-445f-8c7b-3791bf214eda"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "MENU",
+          "transition": "bea09cee-1c9c-4a4b-917c-969c7dbdfd92"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "END",
+          "transition": "d26a2c6b-e9ff-474e-a4e5-14d8175e7bce"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "1d0febd1-8929-464d-b677-c439c70e0e54"
+        }
+      ],
+      "parameters": [
+        { "name": "Attribute", "value": "nextAction" },
+        { "name": "Namespace", "value": "Lex.SessionAttributes" }
+      ],
+      "metadata": {
+        "position": { "x": 1103, "y": 15 },
+        "conditionMetadata": [
+          {
+            "id": "21641be9-6bc6-48e0-b69c-e92b31220b54",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "AGENT"
+          },
+          {
+            "id": "9bcad39b-8988-4451-88cb-74dd951037af",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "MENU"
+          },
+          {
+            "id": "52af6a30-1f2b-4def-99c7-06a7fb541287",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "END"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bea09cee-1c9c-4a4b-917c-969c7dbdfd92",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "bf5ece6b-6ebb-4a59-bd9b-15e45d2b0993"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "This is where I'd route to a main menu.",
+          "namespace": null
+        },
+        { "name": "TextToSpeechType", "value": "text" }
+      ],
+      "metadata": {
+        "position": { "x": 1391, "y": 176.9999965667725 },
+        "useDynamic": false
+      }
+    },
+    {
+      "id": "7f6a465d-c876-4e08-b087-155b544bce7f",
+      "type": "CheckAttribute",
+      "branches": [
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "true",
+          "transition": "5d762456-76cb-4578-9c1f-4e5d79865754"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "151ea3ec-6546-440a-ab9e-5538d862fd52"
+        }
+      ],
+      "parameters": [
+        { "name": "Attribute", "value": "qnabot_gotanswer" },
+        { "name": "Namespace", "value": "Lex.SessionAttributes" }
+      ],
+      "metadata": {
+        "position": { "x": 861, "y": 99 },
+        "conditionMetadata": [
+          {
+            "id": "99f8585b-b71b-406c-b9ca-07cccdeb391b",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "true"
+          }
+        ]
+      }
+    },
+    {
+      "id": "151ea3ec-6546-440a-ab9e-5538d862fd52",
+      "type": "Loop",
+      "branches": [
+        {
+          "condition": "Looping",
+          "transition": "1d0febd1-8929-464d-b677-c439c70e0e54"
+        },
+        {
+          "condition": "Complete",
+          "transition": "bb036f1e-bdfa-4c37-a56f-d24d75ef5551"
+        }
+      ],
+      "parameters": [{ "name": "LoopCount", "value": "2" }],
+      "metadata": { "position": { "x": 1102, "y": 296 }, "useDynamic": false }
+    },
+    {
+      "id": "c0a4597f-c841-4cce-9629-61658abff0b5",
+      "type": "SetAttributes",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "03d86415-cfef-4b8c-860f-c75946f4ba1f"
+        },
+        {
+          "condition": "Error",
+          "transition": "03d86415-cfef-4b8c-860f-c75946f4ba1f"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "Hello. Welcome to QnA bot.  Ask me a question.",
+          "key": "prompt",
+          "namespace": null
+        }
+      ],
+      "metadata": { "position": { "x": 372, "y": 78.99999656677248 } }
+    },
+    {
+      "id": "1d0febd1-8929-464d-b677-c439c70e0e54",
+      "type": "SetAttributes",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "03d86415-cfef-4b8c-860f-c75946f4ba1f"
+        },
+        {
+          "condition": "Error",
+          "transition": "03d86415-cfef-4b8c-860f-c75946f4ba1f"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "connect_nextPrompt",
+          "key": "prompt",
+          "namespace": "Lex.SessionAttributes"
+        }
+      ],
+      "metadata": { "position": { "x": 389, "y": 277 } }
+    },
+    {
+      "id": "03d86415-cfef-4b8c-860f-c75946f4ba1f",
+      "type": "GetUserInput",
+      "branches": [
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "fulfilment_IntentAFnIErtGMZ",
+          "transition": "7f6a465d-c876-4e08-b087-155b544bce7f"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "qnabotfallbackfulfilment_IntentwMKVoiQir",
+          "transition": "7f6a465d-c876-4e08-b087-155b544bce7f"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "7f6a465d-c876-4e08-b087-155b544bce7f"
+        },
+        {
+          "condition": "Error",
+          "transition": "151ea3ec-6546-440a-ab9e-5538d862fd52"
+        }
+      ],
+      "parameters": [
+        { "name": "Text", "value": "prompt", "namespace": "User Defined" },
+        { "name": "TextToSpeechType", "value": "text" },
+        {
+          "name": "BotName",
+          "value": "QNAVpcSupport_dev_dev_master_twooneiYRBP"
+        },
+        { "name": "BotAlias", "value": "live" },
+        { "name": "BotRegion", "value": "us-east-1" },
+        {
+          "name": "Parameter",
+          "key": "x-amz-lex:barge-in-enabled:*:*",
+          "value": "true",
+          "namespace": null
+        },
+        {
+          "name": "Parameter",
+          "key": "isConnectChannel",
+          "value": "Channel",
+          "namespace": "System"
+        },
+        {
+          "name": "Parameter",
+          "key": "connectContactId",
+          "value": "ContactId",
+          "namespace": "System"
+        },
+        {
+          "name": "Parameter",
+          "key": "connect_nextPrompt",
+          "value": "defaultPrompt",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "topic",
+          "value": "topic",
+          "namespace": "Lex.SessionAttributes"
+        },
+        {
+          "name": "Parameter",
+          "key": "qnabotcontext",
+          "value": "qnabotcontext",
+          "namespace": "Lex.SessionAttributes"
+        }
+      ],
+      "metadata": {
+        "position": { "x": 636, "y": 108 },
+        "conditionMetadata": [
+          {
+            "id": "6b7c2836-fec7-46a5-8aa8-5023a063a981",
+            "value": "fulfilment_IntentAFnIErtGMZ"
+          },
+          {
+            "id": "7d5d1433-5b1e-40eb-bee2-a6963595872c",
+            "value": "qnabotfallbackfulfilment_IntentwMKVoiQir"
+          }
+        ],
+        "useDynamic": true,
+        "dynamicMetadata": {
+          "x-amz-lex:barge-in-enabled:*:*": false,
+          "isConnectChannel": true,
+          "connectContactId": true,
+          "connect_nextPrompt": true,
+          "topic": true,
+          "qnabotcontext": true
+        }
+      },
+      "target": "Lex"
+    }
+  ],
+  "version": "1",
+  "type": "contactFlow",
+  "start": "5d04600d-74e5-4799-a6ab-4ab65962f229",
+  "metadata": {
+    "entryPointPosition": { "x": 14.999982102400423, "y": 14.999981265496906 },
+    "snapToGrid": false,
+    "name": "qna-sample",
+    "description": null,
+    "type": "contactFlow",
+    "status": "saved",
+    "hash": "41c0a8ada7933fe006f26f83239c0753a86eda8f2d20084542a2cc2f4300e143"
+  }
+}

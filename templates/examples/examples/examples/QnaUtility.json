@@ -1,4 +1,4 @@
-{
+﻿{
 	"qna": [{
 			"a": "Thank you for your positive feedback on this answer, your feedback helps us continuously improve.",
 			"qid": "Feedback.002",
@@ -11,7 +11,14 @@
 				"Good answer"
 			],
 			"type": "qna"
-		},
+		},{
+      "qid": "CustomNoPII",
+      "a": "I am sorry.  I am not able to respond to questions based on personal information.",
+      "type": "qna",
+      "q": [
+        "pii_rejection_question"
+      ]
+    },
 		{
 			"a": "Thank you for your feedback - we will try to improve this answer.",
 			"qid": "Feedback.001",

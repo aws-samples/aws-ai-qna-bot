@@ -1,0 +1,17 @@
+{
+  "name": "kendra-crawler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chrome-aws-lambda": "^5.5.0",
+    "lodash": "^4.17.20",
+    "pdfreader": "^1.2.8",
+    "puppeteer-core": "^5.5.0"
+  }
+}

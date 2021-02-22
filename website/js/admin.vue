@@ -118,7 +118,15 @@ module.exports={
         subTitle:"Import new questions",
         icon:"cloud_upload",
         href:"#/import"
-      },{
+      },
+      {
+        title:"Import Custom Translation",
+        id:"customTranslate",
+        subTitle:"Import custom translation terminology",
+        icon:"transform",
+        href:"#/customTranslate"
+      },
+      {
         title:"Export",
         id:"export",
         subTitle:"Download backups of your QnAs",

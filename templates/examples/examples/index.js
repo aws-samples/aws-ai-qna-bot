@@ -81,11 +81,11 @@ module.exports=Object.assign(
       }
     },
     "QuizKey":{
-        "Type" : "AWS::KMS::Key",
-        "Properties":{
-            "Description": "QNABot Internal KMS CMK for quiz workflow",
-            "EnableKeyRotation" : true,
-			"KeyPolicy": {
+      "Type" : "AWS::KMS::Key",
+      "Properties":{
+          "Description": "QNABot Internal KMS CMK for quiz workflow",
+          "EnableKeyRotation" : true,
+			KeyPolicy:{
 				"Version": "2012-10-17",
 				"Id": "key-default-1",
 				"Statement": [
@@ -147,17 +147,17 @@ module.exports=Object.assign(
         "MemorySize": "128",
         "Role":{"Ref":"CFNLambdaRole"} ,
         "Runtime": "nodejs10.x",
-        "Timeout": 300,
+        "Timeout": 300,        
         "VpcConfig" : {
-            "Fn::If": [ "VPCEnabled", {
-                "SubnetIds": { "Fn::Split" : [ ",", {"Ref": "VPCSubnetIdList"} ] },
-                "SecurityGroupIds": { "Fn::Split" : [ ",", {"Ref": "VPCSecurityGroupIdList"} ] },
-            }, {"Ref" : "AWS::NoValue"} ]
-        },
-        "TracingConfig" : {
-            "Fn::If": [ "XRAYEnabled", {"Mode": "Active"},
-            {"Ref" : "AWS::NoValue"} ]
-        },
+          "Fn::If": [ "VPCEnabled", {
+              "SubnetIds": { "Fn::Split" : [ ",", {"Ref": "VPCSubnetIdList"} ] },
+              "SecurityGroupIds": { "Fn::Split" : [ ",", {"Ref": "VPCSecurityGroupIdList"} ] },
+          }, {"Ref" : "AWS::NoValue"} ]
+      },
+      "TracingConfig" : {
+          "Fn::If": [ "XRAYEnabled", {"Mode": "Active"},
+          {"Ref" : "AWS::NoValue"} ]
+      },
         "Tags":[{
             Key:"Type",
             Value:"CustomResource"
@@ -339,7 +339,7 @@ function jslambda(name){
         "TracingConfig" : {
             "Fn::If": [ "XRAYEnabled", {"Mode": "Active"},
                 {"Ref" : "AWS::NoValue"} ]
-        },
+        },        
         "Tags":[{
             Key:"Type",
             Value:"Example"
@@ -376,7 +376,7 @@ function pylambda(name){
         "Role": {"Fn::GetAtt": ["ExampleLambdaRole","Arn"]},
         "Runtime": "python3.6",
         "Timeout": 300,
-        "VpcConfig" : {
+                "VpcConfig" : {
             "Fn::If": [ "VPCEnabled", {
                 "SubnetIds": { "Fn::Split" : [ ",", {"Ref": "VPCSubnetIdList"} ] },
                 "SecurityGroupIds": { "Fn::Split" : [ ",", {"Ref": "VPCSecurityGroupIdList"} ] },

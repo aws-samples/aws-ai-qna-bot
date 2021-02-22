@@ -64,6 +64,57 @@ async function update_userInfo(userId, req_userInfo) {
     return res_userInfo;
 }
 
+const comprehend_client = new AWS.Comprehend();
+
+const isPIIDetected = async (text,useComprehendForPII,piiRegex,pii_rejection_ignore_list) => {
+
+
+    console.log("Testing redaction ")
+    if(piiRegex){
+        let re = new RegExp(piiRegex,"g");
+        let redacted_text = text.replace(re,"XXXXXX");
+        console.log(`redacted_text ${redacted_text} text ${text}`)
+        var result = redacted_text != text;
+        console.log(`Is Redacted ${result}`)
+        if(result) //if the regex was returned. No need to call Comprehend
+            return result;
+    } else {
+        console.log("Warning: No value found for setting  PII_REJECTION_REGEX not using REGEX Matching")
+    }
+    if(useComprehendForPII){
+        var params = {
+                LanguageCode: "en",
+                Text: text
+            };
+            try
+            {
+                var comprehendResult = await comprehend_client.detectPiiEntities(params).promise();
+                console.log(JSON.stringify(comprehendResult) + "entity count == " + comprehendResult.Entities.length )
+                if(!("Entities" in comprehendResult) ||  comprehendResult.Entities.length == 0)
+                {
+                    console.log("No PII found by Comprehend")
+                    return false;
+                }
+                console.log("Ignoring types for PII == " + pii_rejection_ignore_list)
+                pii_rejection_ignore_list = pii_rejection_ignore_list.toLowerCase().split(",")
+
+                return comprehendResult.Entities.filter(entity => entity.Score > 0.90 && pii_rejection_ignore_list.indexOf(entity.Type.toLowerCase()) == -1).length > 0;;
+
+            }catch(exception)
+            {
+                console.log("Warning: Exception while trying to detect PII with Comprehend. Skipping...");
+                console.log("Exception " + exception);
+                return false;
+            }
+    
+    }
+
+
+}
+
+
+
+
 module.exports=async function preprocess(req,res){
 
     // lex-web-ui: If idtoken session attribute is present, decode it
@@ -75,6 +126,7 @@ module.exports=async function preprocess(req,res){
             idattrs = _.get(decoded,'payload');
             console.log("Decoded idtoken:",idattrs);
             var kid = _.get(decoded,'header.kid');
+            console.log()
             var default_jwks_url = [_.get(req,'_settings.DEFAULT_USER_POOL_JWKS_URL')];
             var identity_provider_jwks_url = _.get(req,'_settings.IDENTITY_PROVIDER_JWKS_URLS');
             if (identity_provider_jwks_url && identity_provider_jwks_url.length) {
@@ -107,6 +159,22 @@ module.exports=async function preprocess(req,res){
             req.question = _.get(req, '_settings.NO_VERIFIED_IDENTITY_QUESTION','no_verified_identity') ;
         }
     }
+    if(_.get(req,'_settings.PII_REJECTION_ENABLED')){
+        console.log("Checking for PII")
+        console.log("Request--" + JSON.stringify(req))
+        if(_.get(req,"_settings.PII_REJECTION_QUESTION")){
+            if(await isPIIDetected(req.question,
+                _.get(req,"_settings.PII_REJECTION_WITH_COMPREHEND"), 
+                _.get(req,"_settings.PII_REJECTION_REGEX"),
+                _.get(req,"_settings.PII_REJECTION_IGNORE_TYPES"))){
+                console.log("Found PII or REGEX Match - setting question to PII_REJECTION_QUESTION") ;
+                req.question = _.get(req, '_settings.PII_REJECTION_QUESTION') ;
+            }
+        }
+    }else{
+        console.log("Not checking for PII " + _.get(req,'_settings.PII_REJECTION_ENABLED'));
+    }
+
     // Add _userInfo to req, from UsersTable
     // TODO Will need to rework logic if/when we link userid across clients (SMS,WebUI,Alexa)
     var userId = req._userId;
