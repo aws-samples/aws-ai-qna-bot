@@ -71,7 +71,7 @@
 	    {
 	      "qid": "Repeat",
 	      "a": "{{!-- The 'repeat' magic is in the Document Chaining Rule in the Advanced section --}}",
-	      "conditionalChaining": "(SessionAttributes('qnabotcontext.previous.q')) ? SessionAttributes('qnabotcontext.previous.q') : 'help'",
+	      "conditionalChaining": "(PreviousQuestion) ? PreviousQuestion : 'help'",
 	      "type": "qna",
 	      "q": [
 	        "Repeat",

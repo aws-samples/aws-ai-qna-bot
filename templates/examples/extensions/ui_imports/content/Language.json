@@ -10,14 +10,16 @@
     },
     {
       "qid": "Language.000",
-      "a": "{{#setLang 'fr' false}} D'accord. J'ai défini votre langue préférée sur le français. {{/setLang}}\n{{#setLang 'es' false}} Está bien. He establecido tu idioma preferido al español.  {{/setLang}}\n{{#setLang 'de' false}} In Ordnung. Ich habe Ihre bevorzugte Sprache auf Deutsch gesetzt. {{/setLang}}\n{{#setLang 'it' false}} Ok. Ho impostato la tua lingua preferita su italiano.{{/setLang}}\n{{#setLang 'zh' false}} 好吧。我已将您的首选语言设置为中文。{{/setLang}}\n{{#setLang 'en' true}} Ok. I've set your preferred language to English. {{/setLang}}",
+      "a": "{{#setLang 'fr' false}} D'accord. J'ai défini votre langue préférée sur le français. {{/setLang}}\n{{#setLang 'es' false}} Está bien. He establecido tu idioma preferido al español.  {{/setLang}}\n{{#setLang 'de' false}} In Ordnung. Ich habe Ihre bevorzugte Sprache auf Deutsch gesetzt. {{/setLang}}\n{{#setLang 'it' false}} Ok. Ho impostato la tua lingua preferita su italiano.{{/setLang}}\n{{#setLang 'zh' false}} 好吧。我已将您的首选语言设置为中文。{{/setLang}}\n{{#setLang 'ar' true}} حسنا. لقد وضعت لغتك المفضلة على اللغة العربية {{/setLang}}\n{{#setLang 'el' true}} Οκ. Έθεσα τη γλώσσα της προτίμησής σου στα Ελληνικά. {{/setLang}}\n{{#setLang 'en' true}} Ok. I've set your preferred language to English. {{/setLang}}",
       "q": [
         "French",
         "Spanish",
         "German",
         "English",
         "Italian",
-        "Chinese"
+        "Chinese",
+        "Arabic",
+        "Greek"
       ]
     }
   ]

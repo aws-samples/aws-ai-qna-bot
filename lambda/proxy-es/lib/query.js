@@ -107,6 +107,40 @@ async function run_query_kendra(req, query_params) {
     return kendra_response;
 }
 
+// resolves Lambda function name for bundled example lambdas refernced in env.
+function getLambdaName(lambdaRef){
+    var match=lambdaRef.match(/QNA:(.*)/);
+    if(match){
+        return process.env[match[1]] || lambdaRef;
+    }else{
+        return lambdaRef;
+    }
+}
+// used to inoke either chaining rule lambda, or Lambda hook
+async function invokeLambda (lambdaRef, req, res) {
+    let lambdaName = getLambdaName(lambdaRef);
+    console.log("Calling Lambda:", lambdaName);
+    var event={req:req, res:res};
+    var lambda= new aws.Lambda();
+    var lambdares=await lambda.invoke({
+        FunctionName:lambdaName,
+        InvocationType:"RequestResponse",
+        Payload:JSON.stringify(event)
+    }).promise(); 
+    var payload=lambdares.Payload;
+    try {
+        payload = JSON.parse(payload);
+        if (_.get(payload,"req") && _.get(payload,"res")) {
+            req = _.get(payload,"req") ;
+            res = _.get(payload,"res") ;  
+        }
+    } catch (e) {
+        // response is not JSON - noop
+    }
+    console.log("Lambda returned payload: ", JSON.stringify(payload));
+    return [req, res, payload];
+}
+
 function merge_next(hit1, hit2) {
     if (hit1 === undefined) {
         return hit2;
@@ -218,9 +252,36 @@ async function get_hit(req, res) {
             const encrypted = encryptor.encrypt(conditionalChaining);
             _.set(hit, "conditionalChaining", encrypted);
         }
+        
+        // update the res object with the hit results
+        res = update_res_with_hit(req, res, hit); 
+        
+        // Call Lambda Hook with args now & override running as middleware step (old behavior)
+        // This results in:
+        //  - improved predictability of document chaining behavior.. each doc's lambda is run as it is chained
+        //  - autotranslation is now applied to lambda hook responses by default when response is assembled
+        // optional setting to turn off this behaviour if it causes problems, and revert to old way
+        if (_.get(req, '_settings.RUN_LAMBDAHOOK_FROM_QUERY_STEP', true)) { 
+            var lambdaHook = _.get(hit, "l");
+            if (lambdaHook) {
+                var payload;
+                console.log("Invoking Lambda Hook function: ", lambdaHook);
+                [req, res, payload] = await invokeLambda(lambdaHook, req, res);
+                // update hit with values returned in res by lambda hook
+                _.set(hit, "a", _.get(res,"message",""));
+                var markdown = _.get(res,"session.appContext.altMessages.markdown","");
+                var ssml = _.get(res,"session.appContext.altMessages.ssml","");
+                _.set(hit, "alt.markdown", markdown);
+                _.set(hit, "alt.ssml", ssml);
+            }
+            _.set(hit,"l","") ;
+            _.set(hit,"args",[]) ;
+        }
     }
-    return hit;
+    return [req, res, hit];
 }
+
+
 
 /**
  * Central location to evaluate conditional chaining. Chaining can take place either when an elicitResponse is
@@ -244,25 +305,15 @@ async function evaluateConditionalChaining(req, res, hit, conditionalChaining) {
     if (conditionalChaining.toLowerCase().startsWith("lambda::")) {
         // Chaining rule is a Lambda function
         var lambdaName = conditionalChaining.split("::")[1] ;
-        console.log("Calling Lambda:", lambdaName);
-        var event={req:req, res:res};
-        var lambda= new aws.Lambda();
-        var lambdares=await lambda.invoke({
-            FunctionName:lambdaName,
-            InvocationType:"RequestResponse",
-            Payload:JSON.stringify(event)
-        }).promise();
-        console.log("Chaining Rule Lambda response: ", lambdares);
-        var payload=lambdares.Payload;
+        var payload;
+        [req, res, payload] = await invokeLambda (lambdaName, req, res);
+        console.log("Chaining Rule Lambda response payload: ", payload);
         try {
             payload = JSON.parse(payload);
         } catch (e) {
             // response is not JSON
         }
         if (_.get(payload,"req") && _.get(payload,"res")) {
-            console.log("Chaining Rules Lambda returned possibly modified session event in response.");
-            req = _.get(payload,"req") ;
-            res = _.get(payload,"res") ;  
             next_q = _.get(payload,"req.question");
         }
         else {
@@ -281,6 +332,7 @@ async function evaluateConditionalChaining(req, res, hit, conditionalChaining) {
             Settings: req._settings,
             Question: req.question,
             OrigQuestion: _.get(req,"_event.origQuestion",req.question),
+            PreviousQuestion: _.get(req, "session.qnabotcontext.previous.q", false),
             Sentiment: req.sentiment,
         };
         console.log("Evaluating:", conditionalChaining);
@@ -289,7 +341,8 @@ async function evaluateConditionalChaining(req, res, hit, conditionalChaining) {
     }
     console.log("Chained document rule evaluated to:", next_q);
     req.question = next_q;
-    const hit2 = await get_hit(req, res);
+    var hit2;
+    [req, res, hit2] = await get_hit(req, res);
     // if the question we are chaining to, also has conditional chaining, be sure to navigate set up
     // next user input to elicitResponse from this lex Bot.
     if (hit2) {
@@ -314,6 +367,98 @@ async function evaluateConditionalChaining(req, res, hit, conditionalChaining) {
         console.log("WARNING: No documents found for evaluated chaining rule:", next_q);
         return [req, res, hit];
     }
+}
+
+function update_res_with_hit(req, res, hit) {
+    res.result = hit;
+    res.type = "PlainText";
+    res.message = res.result.a;
+    res.plainMessage = res.result.a;
+    
+    // Add answerSource for query hits
+    var ansSource = _.get(hit, "answersource", "unknown");
+    if (ansSource==="Kendra FAQ") { // kendra fallback sets answerSource directly
+        res.answerSource = "KENDRA";
+    } else if (ansSource==="ElasticSearch" || ansSource==="ElasticSearch Fallback") {
+        res.answerSource = "ELASTICSEARCH";
+    } else {
+        res.answerSource = ansSource;
+    }
+
+    // Add alt messages to appContext session attribute JSON value (for lex-web-ui)
+    var tmp;
+    try {
+        tmp=JSON.parse(_.get(res,"session.appContext","{}"));
+    } catch(e) {
+        tmp=_.get(res,"session.appContext","{}");
+    }
+    tmp.altMessages=_.get(res, "result.alt", {});
+    _.set(res, "session.appContext",tmp);
+
+    // Add reprompt 
+    var rp = _.get(res, "result.rp");
+    if (rp) {
+        var type = 'PlainText';
+        
+        if (rp.includes("<speak>")) {
+            type = 'SSML';
+            rp = rp.replace(/\r?\n|\r/g, ' ');
+        }
+        _.set(res, "reprompt",{type, text : rp });
+    }
+
+    if (req._preferredResponseType == "SSML") {
+        if (_.get(res, "result.alt.ssml")) {
+            res.type = "SSML";
+            res.message = res.result.alt.ssml.replace(/\r?\n|\r/g, ' ');
+        }
+    }
+    console.log(res.message);
+    var card = _.get(res, "result.r.title") ? res.result.r : null;
+
+    if (card) {
+        if (res.card === undefined) {
+            res.card = {};
+        }
+        res.card.send = true;
+        res.card.title = _.get(card, 'title');
+        res.card.subTitle = _.get(card, 'subTitle');
+        res.card.imageUrl = _.get(card, 'imageUrl');
+        res.card.buttons = _.get(card, 'buttons');
+    }
+
+    var previousQid = _.get(res, "session.qnabotcontext.previous.qid", false);
+    var navigationJson = _.get(res, "session.qnabotcontext.navigation", false);
+    var previousArray = _.get(res, "session.qnabotcontext.navigation.previous", []);
+    if (
+        previousQid != _.get(res.result, "qid") &&
+        _.get(navigationJson, "hasParent", true) == false &&
+        req._info.es.type == 'qna') {
+        if (previousArray.length == 0) {
+            previousArray.push(previousQid);
+        } else if (previousArray[previousArray.length - 1] != previousQid) {
+            previousArray.push(previousQid);
+        }
+    }
+    if (previousArray.length > 10) {
+        previousArray.shift();
+    }
+    var hasParent = true;
+    if ("next" in res.result) {
+        hasParent = false;
+    }
+    _.set(res,"session.qnabotcontext.previous", {
+        qid: _.get(res.result, "qid"),
+        q: req.question
+        }) ;
+     _.set(res,"session.qnabotcontext.navigation", {
+        next: _.get(res.result, "next", _.get(res, "session.qnabotcontext.navigation.next", "")),
+        previous: previousArray,
+        hasParent: hasParent
+        }) ;
+    res.session.qnabot_qid = _.get(res.result, "qid", "") ;
+    res.session.qnabot_gotanswer = (res['got_hits'] > 0) ? true : false ;
+    return res;
 }
 
 module.exports = async function (req, res) {
@@ -344,10 +489,10 @@ module.exports = async function (req, res) {
         [req, res, hit] = await evaluateConditionalChaining(req, res, fakeHit, elicitResponseChainingConfig);
     } else {
         // elicitResponse is not involved. obtain the next question to serve up to the user.
-        hit = await get_hit(req, res);
+        [req, res, hit] = await get_hit(req, res);
         
     }
-    
+
     if (hit) {
         // found a document in elastic search.
         var c=0;
@@ -389,98 +534,10 @@ module.exports = async function (req, res) {
                 rp: "[" + _.get(hit, "rp") + "] "
             };
             hit = merge_next(debug_msg, hit) ;
-        };
-        res.result = hit;
-        res.type = "PlainText"
-        res.message = res.result.a
-        res.plainMessage = res.result.a
-        
-        // Add answerSource for query hits
-        var ansSource = _.get(hit, "answersource", "unknown")
-        if (ansSource==="Kendra FAQ") { // kendra fallback sets answerSource directly
-            res.answerSource = "KENDRA"
-        } else if (ansSource==="ElasticSearch" || ansSource==="ElasticSearch Fallback") {
-            res.answerSource = "ELASTICSEARCH"
-        } else {
-            res.answerSource = ansSource
         }
-
-        // Add alt messages to appContext session attribute JSON value (for lex-web-ui)
-        var tmp
-        try {
-            tmp=JSON.parse(_.get(res,"session.appContext","{}"));
-        } catch(e) {
-            tmp=_.get(res,"session.appContext","{}");
-        }
-        tmp.altMessages=_.get(res, "result.alt", {});
-        _.set(res, "session.appContext",tmp)
-
-        // Add reprompt 
-        var rp = _.get(res, "result.rp");
-        if (rp) {
-            var type = 'PlainText'
-            
-            if (rp.includes("<speak>")) {
-                type = 'SSML'
-                rp = rp.replace(/\r?\n|\r/g, ' ')
-            }
-            _.set(res, "reprompt",{type, text : rp })
-        }
-
-        if (req._preferredResponseType == "SSML") {
-            if (_.get(res, "result.alt.ssml")) {
-                res.type = "SSML"
-                res.message = res.result.alt.ssml.replace(/\r?\n|\r/g, ' ')
-            }
-        }
-        console.log(res.message)
-        var card = _.get(res, "result.r.title") ? res.result.r : null
-
-        if (card) {
-            if (res.card === undefined) {
-                res.card = {};
-            }
-            res.card.send = true
-            res.card.title = _.get(card, 'title')
-            res.card.subTitle = _.get(card, 'subTitle')
-            res.card.imageUrl = _.get(card, 'imageUrl')
-            res.card.buttons = _.get(card, 'buttons')
-        }
-
-        var navigationJson = _.get(res, "session.qnabotcontext.navigation", false)
-        var previousQid = _.get(res, "session.qnabotcontext.previous.qid", false)
-        var previousArray = _.get(res, "session.qnabotcontext.navigation.previous", [])
-
-        if (
-            previousQid != _.get(res.result, "qid") &&
-            _.get(navigationJson, "hasParent", true) == false &&
-            req._info.es.type == 'qna') {
-            if (previousArray.length == 0) {
-                previousArray.push(previousQid)
-            } else if (previousArray[previousArray.length - 1] != previousQid) {
-                previousArray.push(previousQid)
-            }
-
-        }
-        if (previousArray.length > 10) {
-            previousArray.shift()
-        }
-        var hasParent = true
-        if ("next" in res.result) {
-            hasParent = false
-        }
-        _.set(res,"session.qnabotcontext.previous", {
-            qid: _.get(res.result, "qid"),
-            a: _.get(res.result, "a"),
-            alt: _.get(res.result, "alt", {}),
-            q: req.question
-            }) ;
-         _.set(res,"session.qnabotcontext.navigation", {
-            next: _.get(res.result, "next", _.get(res, "session.qnabotcontext.navigation.next", "")),
-            previous: previousArray,
-            hasParent: hasParent
-            }) ;
+        res = update_res_with_hit(req, res, hit);
     } else {
+        // no hit found
         res.type = "PlainText";
         res.message = _.get(req, '_settings.EMPTYMESSAGE', 'You stumped me!');
     }

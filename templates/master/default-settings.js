@@ -15,7 +15,7 @@ var default_settings = {
     CUSTOM_TERMINOLOGY_SOURCES: "pets", //A comma separated list of custom terminology dictionaries https://docs.aws.amazon.com/translate/latest/dg/how-custom-terminology.html 
     MINIMUM_CONFIDENCE_SCORE: 0.6, //User can override this value to set the minimum confidence they accept using CustomQnABotSettings
     ALT_SEARCH_KENDRA_INDEXES: [], // Add Kendra index to array to enable Amazon Kendra as a fallback source of answers
-    ALT_SEARCH_KENDRA_S3_SIGNED_URLS: "false", // If S3 document URL is in the search result, convert to signed URL. Make sure IAM ExtensionLambdaRole has access to S3 objects in Kendra index.
+    ALT_SEARCH_KENDRA_S3_SIGNED_URLS: "true", // If S3 document URL is in the search result, convert to signed URL. Make sure IAM ExtensionLambdaRole has access to S3 objects in Kendra index (default role grants access to buckets starting with name QNA or qna).
     ALT_SEARCH_KENDRA_S3_SIGNED_URL_EXPIRE_SECS: 300, // Expiry time for signed URLs
     ALT_SEARCH_KENDRA_MAX_DOCUMENT_COUNT: 2, // limit number of document search results returned by Kendra fallback\
     ALT_SEARCH_KENDRA_TOP_ANSWER_MESSAGE: "Amazon Kendra suggested answer.",
@@ -57,8 +57,9 @@ var default_settings = {
     MINIMAL_ES_LOGGING: "false", // do not log utterances or session attributes to elasticsearch for kibana logging
     S3_PUT_REQUEST_ENCRYPTION: "", // enable header x-amz-server-side-encryption header and set with this value
     BOT_ROUTER_WELCOME_BACK_MSG: "Welcome back to QnABot.", // The text used by QnABot when ending communication from a specialty bot
-    BOT_ROUTER_EXIT_MSGS: "exit,quit,goodbye,leave" // The exit phrases in comma separated list available for the a user to end communication with a specialty bot
-}
+    BOT_ROUTER_EXIT_MSGS: "exit,quit,goodbye,leave", // The exit phrases in comma separated list available for the a user to end communication with a specialty bot
+    RUN_LAMBDAHOOK_FROM_QUERY_STEP: "true",
+};
 
 module.exports = {
     "DefaultUserPoolJwksUrl": {

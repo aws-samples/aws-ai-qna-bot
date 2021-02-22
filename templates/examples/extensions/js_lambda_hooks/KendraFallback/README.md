@@ -30,7 +30,7 @@ to display in markdown result. Default is 4.
 #### ALT_SEARCH_KENDRA_S3_SIGNED_URLS  
   
 If set **true** then if S3 document URL is in the search result, convert to a signed URL. 
-IMPORTANT: Make sure IAM Role *...ExtensionLambdaRole...* (used by the Kendra Fallback function) has been granted S3:GetObject access to S3 objects in the Kendra index (otherwise the signed URLS will not have access)
+IMPORTANT: S3 Bucket names must start with QNA or qna (e.g. qnabot-mydocs), otherwise make sure IAM Role *...ExtensionLambdaRole...* (used by the Kendra Fallback function) has been granted S3:GetObject access to S3 objects in the Kendra index (otherwise the signed URLS will not have access)
 
 #### ALT\_SEARCH\_KENDRA\_S3\_SIGNED\_URL\_EXPIRE\_SECS  
   
