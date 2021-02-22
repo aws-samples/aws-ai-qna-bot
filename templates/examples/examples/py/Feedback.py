@@ -30,25 +30,23 @@ def handler(event, context):
         previous = event["req"]["session"]["qnabotcontext"]["previous"]
         previousQid = previous["qid"]
         previousQuestion = previous["q"]
-        previousAnswer = previous["a"]
-        previousAlt = previous["alt"]
         feedbackArg = event["res"]["result"]["args"][0]
         print(feedbackArg)
         
         # - Check feedbackArg from the UI payload. Parse for "thumbs_down_arg" feedback. Based on user action, sendFeedback through SNS, and log in Firehose. 
         if feedbackArg == "incorrect":
-            sendFeedbackNotification(previousQid, previousAnswer, previousQuestion, previousAlt, feedbackArg)
+            sendFeedbackNotification(previousQid, previousQuestion, feedbackArg)
             if (kendraIndexId is not None) and (kendraResponsibleQid==previousQid or kendraResponsibleQid=='KendraFAQ'):
                 print("submitting NOT_RELEVANT to Kendra Feedback")
                 submitFeedbackForKendra(kendraIndexId, kendraQueryId, kendraResultId, "NOT_RELEVANT")
-            logFeedback(previousQid,previousAnswer,previousQuestion, previousAlt, feedbackArg)
+            logFeedback(previousQid, previousQuestion, feedbackArg)
             print("Negative feedback logged, and SNS notification sent")
         
         else:
             if (kendraIndexId is not None) and (kendraResponsibleQid==previousQid or kendraResponsibleQid=='KendraFAQ'):
                 print("submitting RELEVANT to Kendra Feedback")
                 submitFeedbackForKendra(kendraIndexId, kendraQueryId, kendraResultId, "RELEVANT")
-            logFeedback(previousQid, previousAnswer, previousQuestion, previousAlt, feedbackArg)
+            logFeedback(previousQid, previousQuestion, feedbackArg)
             print("Positive feedback logged")
     except Exception as e:
         print("Exception caught (no previous question?): ", e)
@@ -56,11 +54,9 @@ def handler(event, context):
     return event
 
 #logs feedback for the questions
-def logFeedback(qid,answer,question, alt, inputText):
+def logFeedback(qid, question, inputText):
     jsonData = {"qid":"{0}".format(qid),
         "utterance":"{0}".format(question),
-        "answer":"{0}".format(answer),
-        "alternate":"{0}".format(alt),
         "feedback":"{0}".format(inputText),
         "datetime":"{0}".format(datetime.datetime.now().isoformat())
     }
@@ -76,9 +72,9 @@ def logFeedback(qid,answer,question, alt, inputText):
     #print(response)
 
 # - Sends SNS notification for feedback.
-def sendFeedbackNotification( qid,answer,question, alt, inputText):
+def sendFeedbackNotification( qid, question, inputText):
     
-    notificationBody = "\n\nTimestamp: {5} Question ID: {0}\nQuestion: {1} \nAnswer: {2} \nAlternative Answer: {3} \nFeedback: {4}".format(qid,question,answer, alt, inputText, datetime.datetime.now().isoformat())
+    notificationBody = "\n\nTimestamp: {3} Question ID: {0}\nQuestion: {1} \nFeedback: {2}".format(qid,question,inputText, datetime.datetime.now().isoformat())
    
     #print(notificationBody)
     message = {"qnabot": "publish to feedback topic"}
