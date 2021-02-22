@@ -1,246 +1,246 @@
 {
-  "KibanaRole": {
-    "Type": "AWS::IAM::Role",
-    "Properties": {
-      "AssumeRolePolicyDocument": {
-        "Version": "2012-10-17",
-        "Statement": [
-          {
-      "Effect": "Allow",
-      "Principal": {
-        "Federated": "cognito-identity.amazonaws.com"
-      },
-      "Action": "sts:AssumeRoleWithWebIdentity",
-      "Condition": {
-          "StringEquals": {
-              "cognito-identity.amazonaws.com:aud":{"Ref":"KibanaIdPool"}
-          }
+    "KibanaRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+				"Effect": "Allow",
+				"Principal": {
+					"Federated": "cognito-identity.amazonaws.com"
+				},
+				"Action": "sts:AssumeRoleWithWebIdentity",
+				"Condition": {
+				    "StringEquals": {
+				        "cognito-identity.amazonaws.com:aud":{"Ref":"KibanaIdPool"}
+				    }
+				}
+            }
+          ]
+        },
+        "Path": "/",
+        "ManagedPolicyArns": [],
+        "Policies":[]
       }
-          }
-        ]
-      },
-      "Path": "/",
-      "ManagedPolicyArns": [],
-      "Policies":[]
-    }
-  },
-  "AdminRole": {
-    "Type": "AWS::IAM::Role",
-    "Properties": {
-      "AssumeRolePolicyDocument": {
-        "Version": "2012-10-17",
-        "Statement": [
-          {
-      "Effect": "Allow",
-      "Principal": {
-        "Federated": "cognito-identity.amazonaws.com"
-      },
-      "Action": "sts:AssumeRoleWithWebIdentity",
-      "Condition": {
-          "StringEquals": {
-              "cognito-identity.amazonaws.com:aud":{"Ref":"IdPool"}
-          }
-      }
-          }
-        ]
-      },
-      "Path": "/",
-      "ManagedPolicyArns": [],
-      "Policies":[{
-          "PolicyName":"apiAccess",
-          "PolicyDocument": {
-            "Version": "2012-10-17",
-            "Statement": [{
-                "Effect": "Allow",
-                "Action": [   
-                  "es:ESHttp*"
-                ],
-                "Resource": [{"Fn::GetAtt":["ESVar","ESArn"]}]
-              },{
-                "Effect": "Allow",
-                "Action": [   
-                  "execute-api:*"
-                ],
-                "Resource": [{"Fn::Sub":
-                  "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${API}/*/*/*"
-                  }]
-              },{
-                "Effect": "Allow",
-                "Action": [   
-                  "s3:PutObject"
-                ],
-                "Resource": [{"Fn::Sub":
-                  "arn:aws:s3:::${ImportBucket}/data/*"
-                  },
-                  {"Fn::Sub":
-                  "arn:aws:s3:::${TestAllBucket}/data/*"
-                  }]
-              },{
-                "Effect": "Allow",
-                "Action": [   
-                  "s3:GetObject"
-                ],
-                "Resource": [{"Fn::Sub":
-                  "arn:aws:s3:::${ExportBucket}/data/*"
-                  },
-                  {"Fn::Sub":
-                  "arn:aws:s3:::${TestAllBucket}/data/*"
-                  }]
-              },{
-                "Effect": "Allow",
-                "Action": [
-                  "ssm:GetParameters",
-                  "ssm:PutParameter"
-                ],
-                "Resource": [{"Fn::Sub":
-                  "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${DefaultQnABotSettings}"
-                  }, {"Fn::Sub":
-                  "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${CustomQnABotSettings}"
-                  }]
-              }
-            ]
-          }
-      }]
-    }
-  },
-  "UserRole": {
-    "Type": "AWS::IAM::Role",
-    "Properties": {
-      "AssumeRolePolicyDocument": {
-        "Version": "2012-10-17",
-        "Statement": [
-          {
-            "Effect": "Allow",
-            "Principal": {
-                  "Federated": "cognito-identity.amazonaws.com"
-            },
-            "Action": "sts:AssumeRoleWithWebIdentity",
-              "Condition": {
-          "StringEquals": {
-              "cognito-identity.amazonaws.com:aud":{"Ref":"IdPool"}
-          }
-      }
-          }
-        ]
-      },
-      "Path": "/",
-      "ManagedPolicyArns": []
-    }
-  },
-  "UnauthenticatedRole": {
-    "Type": "AWS::IAM::Role",
-    "Properties": {
-      "AssumeRolePolicyDocument": {
-        "Version": "2012-10-17",
-        "Statement": [
-          {
-            "Effect": "Allow",
-            "Principal": {
-                  "Federated": "cognito-identity.amazonaws.com"
-            },
-            "Action": "sts:AssumeRoleWithWebIdentity",
-              "Condition": {
-                  "StringEquals": {
-                      "cognito-identity.amazonaws.com:aud":{"Ref":"IdPool"}
-                  }
-              }
-          }
-        ]
-      },
-      "Path": "/",
-      "ManagedPolicyArns": []
-    }
-  },
-  "CFNLambdaRole":{
-    "Type": "AWS::IAM::Role",
-    "Properties": {
-      "AssumeRolePolicyDocument": {
-        "Version": "2012-10-17",
-        "Statement": [
-          {
-            "Effect": "Allow",
-            "Principal": {
-              "Service": "lambda.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-          }
-        ]
-      },
-      "Path": "/",
-      "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-          "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
-      ],
-      "Policies":[{
-          "PolicyName":"access", 
-          "PolicyDocument": {
+    },
+    "AdminRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+				"Effect": "Allow",
+				"Principal": {
+					"Federated": "cognito-identity.amazonaws.com"
+				},
+				"Action": "sts:AssumeRoleWithWebIdentity",
+				"Condition": {
+				    "StringEquals": {
+				        "cognito-identity.amazonaws.com:aud":{"Ref":"IdPool"}
+				    }
+				}
+            }
+          ]
+        },
+        "Path": "/",
+        "ManagedPolicyArns": [],
+        "Policies":[{
+            "PolicyName":"apiAccess",
+            "PolicyDocument": {
               "Version": "2012-10-17",
               "Statement": [{
-                "Effect": "Allow",
-                "Action": [
-                  "es:*"
-                ],
-                "Resource":["*"]
+                  "Effect": "Allow",
+                  "Action": [   
+                    "es:ESHttp*"
+                  ],
+                  "Resource": [{"Fn::GetAtt":["ESVar","ESArn"]}]
+                },{
+                  "Effect": "Allow",
+                  "Action": [   
+                    "execute-api:*"
+                  ],
+                  "Resource": [{"Fn::Sub":
+                    "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${API}/*/*/*"
+                    }]
+                },{
+                  "Effect": "Allow",
+                  "Action": [   
+                    "s3:PutObject"
+                  ],
+                  "Resource": [{"Fn::Sub":
+                    "arn:aws:s3:::${ImportBucket}/data/*"
+                    },
+                    {"Fn::Sub":
+                    "arn:aws:s3:::${TestAllBucket}/data/*"
+                    }]
+                },{
+                  "Effect": "Allow",
+                  "Action": [   
+                    "s3:GetObject"
+                  ],
+                  "Resource": [{"Fn::Sub":
+                    "arn:aws:s3:::${ExportBucket}/data/*"
+                    },
+                    {"Fn::Sub":
+                    "arn:aws:s3:::${TestAllBucket}/data/*"
+                    }]
+                },{
+                  "Effect": "Allow",
+                  "Action": [
+                    "ssm:GetParameters",
+                    "ssm:PutParameter"
+                  ],
+                  "Resource": [{"Fn::Sub":
+                    "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${DefaultQnABotSettings}"
+                    }, {"Fn::Sub":
+                    "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${CustomQnABotSettings}"
+                    }]
+                }
+              ]
+            }
+        }]
+      }
+    },
+    "UserRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                    "Federated": "cognito-identity.amazonaws.com"
               },
-              {
-                "Effect": "Allow",
-                "Action": [
-                  "lex:PutSlotType",
-                  "lex:GetSlotType",
-                  "lex:DeleteSlotType",
-                  "lex:PutIntent",
-                  "lex:GetIntent",
-                  "lex:DeleteIntent",
-                  "lex:PutBot",
-                  "lex:GetBot",
-                  "lex:DeleteBot",
-                  "lex:PutBotAlias",
-                  "lex:DeleteBotAlias",
-                  "lex:GetBotAlias",
-                  "lex:GetBotVersions",
-                  "lex:GetIntentVersions",
-                  "lex:GetSlotTypeVersions"
-                ],
-                "Resource": [
-                  "*"
-                ]
+              "Action": "sts:AssumeRoleWithWebIdentity",
+                "Condition": {
+				    "StringEquals": {
+				        "cognito-identity.amazonaws.com:aud":{"Ref":"IdPool"}
+				    }
+				}
+            }
+          ]
+        },
+        "Path": "/",
+        "ManagedPolicyArns": []
+      }
+    },
+    "UnauthenticatedRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                    "Federated": "cognito-identity.amazonaws.com"
               },
-              {
-                "Effect": "Allow",
-                "Action": [   
-                  "apigateway:*"
-                ],
-                "Resource": ["*"]
+              "Action": "sts:AssumeRoleWithWebIdentity",
+                "Condition": {
+                    "StringEquals": {
+                        "cognito-identity.amazonaws.com:aud":{"Ref":"IdPool"}
+                    }
+                }
+            }
+          ]
+        },
+        "Path": "/",
+        "ManagedPolicyArns": []
+      }
+    },
+    "CFNLambdaRole":{
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
               },
-              {
-                "Effect": "Allow",
-                "Action": [   
-                  "cognito-identity:SetIdentityPoolRoles",
-                  "cognito-identity:GetIdentityPoolRoles",
-                  "iam:PassRole",
-                  "iam:CreateServiceLinkedRole"
-                ],
-                "Resource": ["*"]
-              },
-              {
-                "Effect": "Allow",
-                "Action": [
-                  "cognito-idp:*"
-                ],
-                "Resource": ["*"]
-              },
-              {
-                "Effect": "Allow",
-                "Action": [
-                  "s3:*"
-                ],
-                "Resource":[
-                  {"Fn::Sub":"arn:aws:s3:::*"}
-                ]
-              }]
-          }
-      }]
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/",
+        "ManagedPolicyArns": [
+            "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+            "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+            "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+        ],
+        "Policies":[{
+            "PolicyName":"access", 
+            "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [{
+                  "Effect": "Allow",
+                  "Action": [
+                    "es:*"
+                  ],
+                  "Resource":["*"]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "lex:PutSlotType",
+                    "lex:GetSlotType",
+                    "lex:DeleteSlotType",
+                    "lex:PutIntent",
+                    "lex:GetIntent",
+                    "lex:DeleteIntent",
+                    "lex:PutBot",
+                    "lex:GetBot",
+                    "lex:DeleteBot",
+                    "lex:PutBotAlias",
+                    "lex:DeleteBotAlias",
+                    "lex:GetBotAlias",
+                    "lex:GetBotVersions",
+                    "lex:GetIntentVersions",
+                    "lex:GetSlotTypeVersions"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [   
+                    "apigateway:*"
+                  ],
+                  "Resource": ["*"]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [   
+                    "cognito-identity:SetIdentityPoolRoles",
+                    "cognito-identity:GetIdentityPoolRoles",
+                    "iam:PassRole",
+                    "iam:CreateServiceLinkedRole"
+                  ],
+                  "Resource": ["*"]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cognito-idp:*"
+                  ],
+                  "Resource": ["*"]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:*"
+                  ],
+                  "Resource":[
+                    {"Fn::Sub":"arn:aws:s3:::*"}
+                  ]
+                }]
+            }
+        }]
+      }
     }
-  }
 }
