@@ -778,7 +778,7 @@ module.exports=Object.assign(
           //Add Lambda targets here as needed
           {
             Arn: {
-              "Fn::GetAtt": ["KendraCrawlerLambda", "Arn"],
+              "Fn::GetAtt": ["KendraCrawlerCWRuleUpdaterLambda", "Arn"],
             },
             Id: "KendraCrawler",
           },
@@ -789,7 +789,7 @@ module.exports=Object.assign(
       Type: "AWS::Lambda::Permission",
       Properties: {
         FunctionName: {
-          "Fn::GetAtt": ["KendraCrawlerLambda", "Arn"],
+          "Fn::GetAtt": ["KendraCrawlerCWRuleUpdaterLambda", "Arn"],
         },
         Action: "lambda:InvokeFunction",
         Principal: "events.amazonaws.com",
@@ -1070,7 +1070,7 @@ module.exports=Object.assign(
         },
         Handler: "index.handler",
         MemorySize: "2048",
-        Role: { "Fn::GetAtt": ["KendraCrawlerCWRuleUpdaterrRole", "Arn"] },
+        Role: { "Fn::GetAtt": ["KendraCrawlerCWRuleUpdaterRole", "Arn"] },
         Runtime: "nodejs12.x",
         Timeout: 900,
         Tags: [
@@ -1081,7 +1081,7 @@ module.exports=Object.assign(
         ],
       },
     },
-    KendraCrawlerCWRuleUpdaterrRole: {
+    KendraCrawlerCWRuleUpdaterRole: {
       Type: "AWS::IAM::Role",
       Properties: {
         AssumeRolePolicyDocument: {
