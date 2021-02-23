@@ -6,7 +6,6 @@ const sleep = require("util").promisify(setTimeout);
 const https = require("https");
 const pdfreader = require("pdfreader");
 
-AWS.config.update({ region: "us-east-1" });
 
 /**
  * Function to check if a string has a JSON structure
