@@ -473,9 +473,10 @@ async function getSyncJobStatus(kendraIndexId, dataSourceId, executionId) {
     }
     console.log("SyncJobHistory");
     console.log(JSON.stringify(syncJobResult["History"]));
-    var dataSourceSyncJob = syncJobResult["History"].sort((a, b) =>
+    var dataSourceHistory = syncJobResult["History"].sort((a, b) =>
       a.StartTime > b.StartTime ? -1 : 1
-    )[0];
+    );
+    var dataSourceSyncJob = dataSourceHistory[0];
     var pendingStatus = [
       "SYNCING",
       "INCOMPLETE",
@@ -488,6 +489,7 @@ async function getSyncJobStatus(kendraIndexId, dataSourceId, executionId) {
         ErrorMessage: "",
         StartTime: "n/a",
         ExecutionId: "",
+        History: dataSourceHistory
       };
     }
     if (pendingStatus.includes(dataSourceSyncJob.Status)) {
@@ -496,79 +498,27 @@ async function getSyncJobStatus(kendraIndexId, dataSourceId, executionId) {
         ErrorMessage: "",
         StartTime: dataSourceSyncJob.StartTime,
         ExecutionId: dataSourceSyncJob.ExecutionId,
+        History: dataSourceHistory
       };
     } else {
       return {
         Status: dataSourceSyncJob.Status,
         StartTime: dataSourceSyncJob.StartTime,
         ErrorMessage: "",
+        History: dataSourceHistory
       };
     }
   } catch (err) {
     console.log(`error retrieving status ${err}`);
     return {
-      Status: "Unknown",
+      Status: "INDEX NOT CREATED",
       StartTime: "",
       ErrorMessage: err,
+      History: ""
     };
   }
 }
 
-async function updateCloudWatchEvent(ruleName, settings) {
-  var cloudwatchevents = new AWS.CloudWatchEvents();
-  var assignedRules;
-  var rule = await cloudwatchevents.describeRule({ Name: ruleName }).promise();
-  var currentState = settings.ENABLE_KENDRA_WEB_INDEXER
-    ? "ENABLED"
-    : "DISABLED";
-  console.log(
-    `RuleName ${ruleName} KENDRA_INDEXER_SCHEDULE ${
-      settings.KENDRA_INDEXER_SCHEDULE
-    } settings State ${currentState}`
-  );
-  console.log(
-    `RuleName ${ruleName} current schedule        ${
-      rule.ScheduleExpression
-    } current state  ${rule.State}`
-  );
-  //only allow rate() syntax because that is easy to parse and put guard rails around
-  if (
-    !(
-      settings.KENDRA_INDEXER_SCHEDULE.startsWith("rate(") &&
-      settings.KENDRA_INDEXER_SCHEDULE.endsWith(")")
-    )
-  ) {
-    throw "KENDRA_INDEXER_SCHEDULE must use CloudWatch rate() format -- see https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions";
-  }
-  var timeParts = settings.KENDRA_INDEXER_SCHEDULE.replace("rate(", "")
-    .replace(")", "")
-    .split(" ");
-  console.log("parts " + JSON.stringify(timeParts));
-  if (timeParts.length != 2) {
-    throw "Invalid schedule format.  See https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions for valid expressions";
-  }
-  validUnits = ["hour", "hours", "day", "days"];
-  if (!validUnits.includes(timeParts[1])) {
-    throw "Kendra Indexer only supports hours and days";
-  }
-  if (parseInt(timeParts[0]) != timeParts[0]) {
-    throw "Only integer values are supported";
-  }
-  if (
-    rule.ScheduleExpression != settings.KENDRA_INDEXER_SCHEDULE ||
-    rule.State != currentState
-  ) {
-    console.log(`Updating rule ${ruleName}`);
-    var params = {
-      Name: rule.Name,
-      Description: rule.Description,
-      ScheduleExpression: settings.KENDRA_INDEXER_SCHEDULE,
-      State: currentState,
-    };
-    var result = await cloudwatchevents.putRule(params).promise();
-    console.log("Rule Updated " + JSON.stringify(result));
-  }
-}
 
 exports.handler = async (event, context, callback) => {
   pageCount = 0;
@@ -578,10 +528,6 @@ exports.handler = async (event, context, callback) => {
     var settings = await get_settings();
     var kendraIndexId = settings.KENDRA_WEB_PAGE_INDEX;
 
-    if (event["detail-type"] == "Parameter Store Change") {
-      await updateCloudWatchEvent(process.env.CLOUDWATCH_RULENAME, settings);
-      return;
-    }
     if (event["path"] == "/crawler/status") {
       if (!kendraIndexId) {
         return {
@@ -624,7 +570,6 @@ exports.handler = async (event, context, callback) => {
       throw "KENDRA_WEB_PAGE_INDEX was not specified in settings";
     }
     var urls = settings.KENDRA_INDEXER_URLS.split(",");
-    await updateCloudWatchEvent(process.env.CLOUDWATCH_RULENAME, settings);
     await indexPages(kendraIndexId, process.env.DATASOURCE_NAME, urls, true);
     return;
   } catch (err) {
@@ -700,25 +645,3 @@ async function indexPages(
   }
 }
 
-// (async function main() {
-//   process.env.DEFAULT_SETTINGS_PARAM = "CFN-DefaultQnABotSettings-oV2Ix0eaXC53";
-//   process.env.CUSTOM_SETTINGS_PARAM = "CFN-CustomQnABotSettings-xC1d440g02LZ";
-//   process.env.DATASOURCE_NAME = "QNABotKendraCrawler-oV2Ix0eaXC53";
-
-//   var status = await getDataSourceIdFromDataSourceName(
-//     "c46b5bd5-c1d2-4091-9f89-b9e9c4e7d07a",
-//     "QNABotKendraCrawler-oV2Ix0eaXC53"
-//   );
-
-//   var results = getTextFromPDF(
-//     "https://dlt.ri.gov/emergencyui/covidupdates122720.pdf"
-//   );
-
-//   result = await bufferize(
-//     "https://dlt.ri.gov/emergencyui/WorkShare%20FAQs%2012.11.20.pdf"
-//   );
-//   var lines = await readlines(result);
-//   var allLines = lines.flat(5);
-//   var allText = lines.join("\r\n");
-//   console.log(allText);
-// })();

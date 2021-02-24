@@ -877,21 +877,6 @@ module.exports=Object.assign(
           Variables: {
             DEFAULT_SETTINGS_PARAM: { Ref: "DefaultQnABotSettings" },
             CUSTOM_SETTINGS_PARAM: { Ref: "CustomQnABotSettings" },
-            CLOUDWATCH_RULENAME: {
-              "Fn::Join": [
-                //Can't Ref the CloudWatchRule - creates circular dependency
-                "-",
-                [
-                  "KendraCrawlerRule",
-                  {
-                    "Fn::Select": [
-                      2,
-                      { "Fn::Split": ["-", { Ref: "DefaultQnABotSettings" }] },
-                    ],
-                  },
-                ],
-              ],
-            },
             DATASOURCE_NAME: {
               "Fn::Join": [
                 "-",
@@ -972,26 +957,6 @@ module.exports=Object.assign(
                 {"Fn::Join": ["",["arn:aws:ssm:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":parameter/",{"Ref":"CustomQnABotSettings"}]]},
                 {"Fn::Join": ["",["arn:aws:ssm:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":parameter/",{"Ref":"DefaultQnABotSettings"}]]},
             ],
-            },
-  
-            {
-              Effect: "Allow",
-              Action: ["events:DescribeRule", "events:PutRule"],
-              Resource: {
-                "Fn::Join": [
-                  //Can't Ref the CloudWatchRule - creates circular dependency
-                  "",
-                  ["arn:aws:events:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":rule/",
-                    "KendraCrawlerRule-",
-                    {
-                      "Fn::Select": [
-                        2,
-                        { "Fn::Split": ["-", { Ref: "DefaultQnABotSettings" }] },
-                      ],
-                    },
-                  ],
-                ],
-              },
             },
           ],
         },

@@ -1,7 +1,14 @@
 const AWS = require("aws-sdk");
 const _ = require("lodash");
 
-
+function isJson(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
 
 async function retry(count, func) {
   var retryCount = 0;
@@ -87,7 +94,6 @@ async function get_settings() {
   return settings;
 }
 
-
 async function updateCloudWatchEvent(ruleName, settings) {
   var cloudwatchevents = new AWS.CloudWatchEvents();
   var assignedRules;
@@ -105,41 +111,51 @@ async function updateCloudWatchEvent(ruleName, settings) {
       rule.ScheduleExpression
     } current state  ${rule.State}`
   );
-  //only allow rate() syntax because that is easy to parse and put guard rails around
-  if (
-    !(
-      settings.KENDRA_INDEXER_SCHEDULE.startsWith("rate(") &&
-      settings.KENDRA_INDEXER_SCHEDULE.endsWith(")")
-    )
-  ) {
-    throw "KENDRA_INDEXER_SCHEDULE must use CloudWatch rate() format -- see https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions";
-  }
-  var timeParts = settings.KENDRA_INDEXER_SCHEDULE.replace("rate(", "")
-    .replace(")", "")
-    .split(" ");
-  console.log("parts " + JSON.stringify(timeParts));
-  if (timeParts.length != 2) {
-    throw "Invalid schedule format.  See https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions for valid expressions";
-  }
-  validUnits = ["hour", "hours", "day", "days"];
-  if (!validUnits.includes(timeParts[1])) {
-    throw "Kendra Indexer only supports hours and days";
-  }
-  if (parseInt(timeParts[0]) != timeParts[0]) {
-    throw "Only integer values are supported";
-  }
-  if (
-    rule.ScheduleExpression != settings.KENDRA_INDEXER_SCHEDULE ||
-    rule.State != currentState
-  ) {
-    console.log(`Updating rule ${ruleName}`);
-    var params = {
-      Name: rule.Name,
-      Description: rule.Description,
-      ScheduleExpression: settings.KENDRA_INDEXER_SCHEDULE,
-      State: currentState,
-    };
-    var result = await cloudwatchevents.putRule(params).promise();
+  if (settings.KENDRA_INDEXER_SCHEDULE != "") {
+    //only allow rate() syntax because that is easy to parse and put guard rails around
+    if (
+      !(
+        settings.KENDRA_INDEXER_SCHEDULE.startsWith("rate(") &&
+        settings.KENDRA_INDEXER_SCHEDULE.endsWith(")")
+      )
+    ) {
+      throw "KENDRA_INDEXER_SCHEDULE must use CloudWatch rate() format -- see https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions";
+    }
+    var timeParts = settings.KENDRA_INDEXER_SCHEDULE.replace("rate(", "")
+      .replace(")", "")
+      .split(" ");
+    console.log("parts " + JSON.stringify(timeParts));
+    if (timeParts.length != 2) {
+      throw "Invalid schedule format.  See https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions for valid expressions";
+    }
+    validUnits = ["hour", "hours", "day", "days"];
+    if (!validUnits.includes(timeParts[1])) {
+      throw "Kendra Indexer only supports hours and days";
+    }
+    if (parseInt(timeParts[0]) != timeParts[0]) {
+      throw "Only integer values are supported";
+    }
+
+    if (
+      rule.ScheduleExpression != settings.KENDRA_INDEXER_SCHEDULE ||
+      rule.State != currentState
+    ) {
+      console.log(`Updating rule ${ruleName}`);
+      var params = {
+        Name: rule.Name,
+        Description: rule.Description,
+        ScheduleExpression: settings.KENDRA_INDEXER_SCHEDULE,
+        State: currentState,
+      };
+      let result = await cloudwatchevents.putRule(params).promise();
+      console.log("Rule Updated " + JSON.stringify(result));
+    
+    }
+  }else {
+    let result = await cloudwatchevents.putRule(
+       {Name: ruleName,
+        ScheduleExpression: "rate(30 days)", //A rate has to be specified
+        State:"DISABLED"}).promise();
     console.log("Rule Updated " + JSON.stringify(result));
   }
 }
@@ -162,4 +178,3 @@ exports.handler = async (event, context, callback) => {
     throw err;
   }
 };
-
