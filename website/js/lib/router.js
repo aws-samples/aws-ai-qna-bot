@@ -34,8 +34,12 @@ module.exports={
             component:require('../components/import.vue').default
         },
         {   path:'/customTranslate',
-            name:"custom terminology",
+            name:"Import Custom Terminology",
             component:require('../components/customTranslate.vue').default
+        },
+        {   path:'/kendraIndex',
+            name:"Kendra Web Page Indexing",
+            component:require('../components/kendraIndex.vue').default
         },
         {   path:'/export',
             name:"export",

@@ -86,7 +86,7 @@ exports.handler =  async function(event, context) {
 
 
  
-// (async () => {
-//   process.env.AWS_REGION = "us-west-2"
-//   var result = await createCallFlow()
-// })()
+(async () => {
+  process.env.AWS_REGION = "us-west-2"
+  var result = await createCallFlow()
+})()

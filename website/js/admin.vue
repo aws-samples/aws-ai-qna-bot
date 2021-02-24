@@ -127,6 +127,13 @@ module.exports={
         href:"#/customTranslate"
       },
       {
+        title:"Kendra Web Page Indexing",
+        id:"kendraIndexing",
+        subTitle:"Index Web Pages with Kendra",
+        icon:"kendraIndex",
+        href:"#/kendraIndex"
+      },
+      {
         title:"Export",
         id:"export",
         subTitle:"Download backups of your QnAs",
