@@ -34,7 +34,7 @@ module.exports={
             component:require('../components/import.vue').default
         },
         {   path:'/customTranslate',
-            name:"customTranslate",
+            name:"custom terminology",
             component:require('../components/customTranslate.vue').default
         },
         {   path:'/export',
