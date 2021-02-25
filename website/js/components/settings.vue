@@ -6,6 +6,7 @@
         v-card
           v-card-title 
             h3 Settings
+            h3 <a href="">https://github.com/aws-samples/aws-ai-qna-bot/blob/master/website/js/components/settings.md</a>
           v-card-text
             v-list(three-line)
                 v-list-tile(v-for="(parameter,index) in mergedSettings")
