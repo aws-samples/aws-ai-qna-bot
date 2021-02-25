@@ -22,8 +22,7 @@
               build
             v-list-tile
               sync
-            v-list-tile
-              crawler
+
     span
       questions(@filter="get(pagination)" v-if="active==='questions'")
       test(v-if="active==='test'")
@@ -151,7 +150,6 @@ module.exports={
     build:require('./rebuild.vue').default,
     alexa:require('./alexa.vue').default,
     sync:require('./synckendra.vue').default,
-    crawler:require('./crawler.vue').default
 
   },
   computed:{

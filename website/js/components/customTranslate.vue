@@ -3,7 +3,7 @@
     v-layout(column)
       v-flex
         v-card
-          v-card-title.display-1.pa-2 Import
+          v-card-title.display-1.pa-2 Import Custom Terminologies
           v-card-text
             p {{importWarning}}  
             p.title From File
@@ -23,7 +23,7 @@
             p {{uploadStatus}}
       v-flex(v-if="jobs.length>0")
         v-card(id="import-jobs")
-          v-card-title.headline Installed Terminologies
+          v-card-title.headline Installed Custom Terminologies
           v-card-text
               table.table
                 tr

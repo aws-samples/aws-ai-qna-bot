@@ -6,13 +6,39 @@
       v-card-title(primary-title)
         .headline Kendra Web Page Indexer
       v-card-text
-        p Current Stats {{status}}
+        p Current Status {{status}}
       v-card-actions
         v-btn(
           id="btnKendraStartIndex" 
           :disabled="status == 'PENDING' || status=='STARTING'"
           @click="start"
         ) Start Indexing
+
+      
+      v-flex(v-if="history && history.length>0")
+        v-card
+          table.table
+            caption <h3>Sync History</h3>
+            tr
+              th(style="text-align:left") Start Time
+              th(style="text-align:left") End Time
+              th(style="text-align:left") Status
+              th(style="text-align:left") Error Message
+              th(style="text-align:left") Documents Added
+              th(style="text-align:left") Documents Modified
+              th(style="text-align:left") Documents Failed
+
+
+            template(v-for="(job,index) in history")
+                tr
+                  td {{job.StartTime}}
+                  td {{job.EndTime}}
+                  td {{job.Status}}
+                  td {{job.ErrorMessage}}
+                  td {{job.Metrics.DocumentsAdded}}
+                  td {{job.Metrics.DocumentsModified}}
+                  td {{job.Metrics.DocumentsDeleted}}
+
       v-card-actions
         v-spacer
         v-btn(@click='dialog = false') Close
@@ -41,12 +67,14 @@ module.exports={
   data:function(){
     var self=this
     return {
-      status: {},
+      status: "",
+      history: {},
       dialog: false,
       text:false,
       ready:false,
       kendraIndexerEnabled:false,
       lastStatusCheck: Date.now()
+
     }
   },
   components:{
@@ -63,9 +91,13 @@ module.exports={
       if(!this.lastStatusCheck || Date.now() - this.lastStatusCheck > 9000){
         self.getKendraIndexingStatus().then((data) => {
           self.status = data.Status;
+          self.history = data.History,
+          console.log("History " + JSON.stringify(self.history))
+          self.lastStatusCheck = Date.now();
+
         })
+
        }
-      this.lastStatusCheck = Date.now();
       //if the Kendra Start Index isn't displayed -- stop syncing
       return document.getElementById('btnKendraStartIndex').offsetWidth == 0;
     },600000,10000 ).catch((error) => console.log("Error trying to retrieve status " + error));
@@ -74,7 +106,6 @@ module.exports={
       const self=this
       setTimeout(async function() {
         const settings=await self.$store.dispatch('api/listSettings');
-        // console.log(`${JSON.stringify(settings[2],null,2)}`);
         self.kendraIndexerEnabled = _.get(settings[2],"ENABLE_KENDRA_WEB_INDEXER")=="true" && _.get(settings[2],"KENDRA_INDEXER_URLS") !== "" 
         && _.get(settings[2],"KENDRA_WEB_PAGE_INDEX") !== "";
       }, 2000);

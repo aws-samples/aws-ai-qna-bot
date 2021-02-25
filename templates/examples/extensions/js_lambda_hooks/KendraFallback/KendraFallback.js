@@ -445,7 +445,7 @@ async function routeKendraRequest(event, context) {
       answerDocumentUris.forEach(function(element) {
         // Convert S3 Object URLs to signed URLs
         if (signS3Urls) {
-          element = signS3URL(element.DocumentURI, expireSeconds);
+          element.DocumentURI = signS3URL(element.DocumentURI, expireSeconds);
         }
         event.res.session.appContext.altMessages.markdown += `[${element.DocumentTitle.Text}](${element.DocumentURI})`;
       });
@@ -454,7 +454,7 @@ async function routeKendraRequest(event, context) {
     let idx=foundAnswerCount;
     if (seenTop == false){
         helpfulDocumentsUris.forEach(function (element) {
-            if (idx++ < maxDocumentCount-seenTop) {
+            if (idx++ < maxDocumentCount) {
                 event.res.session.appContext.altMessages.markdown += `\n\n`;
                 event.res.session.appContext.altMessages.markdown += `***`;
                 event.res.session.appContext.altMessages.markdown += `\n\n <br>`;
@@ -490,8 +490,8 @@ async function routeKendraRequest(event, context) {
         console.log("Autotranslate hit to usrLang: ", usrLang);
   
         hit= await translate.translate_hit(hit, usrLang, event.req);
-
-
+        //Translate places extra space between the * in the header
+        hit.markdown = hit.markdown.replace(" *").replace("* ");
 
       } else {
         console.log("User Lang is en, Autotranslate not required.");
@@ -512,7 +512,7 @@ async function routeKendraRequest(event, context) {
         hit.ssml = msg + " " + hit.ssmlMessage
     };
 
-    event.res.session.appContext.altMessages.markdown = hit.markdown.replace("* ","*").replace(" *","*");
+
     event.res.session.appContext.altMessages.ssml = hit.ssml;
     event.res.plainMessage = hit.a;
     event.res.message = hit.markdown;

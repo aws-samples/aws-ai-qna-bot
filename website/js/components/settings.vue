@@ -5,7 +5,9 @@
       v-flex
         v-card
           v-card-title 
-            h3 Settings
+            h2 Settings
+          v-card-text
+            h3 <a href="https://github.com/aws-samples/aws-ai-qna-bot/blob/master/website/js/components/settings.md" target="_blank">Help</a>
           v-card-text
             v-list(three-line)
                 v-list-tile(v-for="(parameter,index) in mergedSettings")
