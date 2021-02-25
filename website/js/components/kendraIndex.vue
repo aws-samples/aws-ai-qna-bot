@@ -4,11 +4,16 @@ v-container#page-import(column, grid-list-md)
     v-flex
       v-card
         v-card-title.display-1.pa-2 Kendra Web Page Indexing
-        v-card-text
+        v-card-text(v-if="kendraIndexerEnabled == true")
           p Current Status {{ status }}
+        v-card-text(v-if="!kendraIndexerEnabled")
+          p The following settings should be set 
+          p ENABLE_KENDRA_WEB_INDEXER - should be set to true
+          p KENDRA_WEB_PAGE_INDEX - the ID of the Kendra Index used to store the content of the web pages
+          p KENDRA_INDEXER_URLS - a comma separated list of web pages to index
         v-card-actions
           v-btn#btnKendraStartIndex(
-            :disabled="status == 'PENDING' || status == 'STARTING'",
+            :disabled="status == 'PENDING' || status == 'STARTING' || !kendraIndexerEnabled",
             @click="start"
           ) Start Indexing
         v-flex(v-if="history && history.length > 0")
@@ -72,9 +77,11 @@ module.exports = {
   updated: function () {
     console.log("updated");
     var self = this;
+    self.IsKendraEnabled().then((data) => {
+      self.kendraIndexerEnabled = data;
+    })
     this.poll(
       () => {
-        console.log("polling");
         console.log("last status check " + self.lastStatusCheck);
         if (!self.lastStatusCheck || Date.now() - self.lastStatusCheck > 10000) {
           console.log("getting status");
@@ -97,6 +104,9 @@ module.exports = {
     ).catch((error) => console.log("Error trying to retrieve status " + error));
   },
   mounted: function () {
+    var self = this;
+
+
     console.log("updated");
     var self = this;
     self.getKendraIndexingStatus().then((data) => {
@@ -134,6 +144,14 @@ module.exports = {
         isoDateTime.toLocaleTimeString()
       );
     },
+
+    IsKendraEnabled: async function(){
+        const settings=await this.$store.dispatch('api/listSettings');
+        console.log(JSON.stringify(settings));
+        return _.get(settings[2],"ENABLE_KENDRA_WEB_INDEXER")=="true" && _.get(settings[2],"KENDRA_INDEXER_URLS") !== "" 
+        && _.get(settings[2],"KENDRA_WEB_PAGE_INDEX") !== "";
+      },
+    
 
     poll: function (fn, timeout, interval) {
       var endTime = Number(new Date()) + (timeout || 2000);
