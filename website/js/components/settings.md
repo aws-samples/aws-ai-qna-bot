@@ -29,7 +29,7 @@
 | KENDRA_FAQ_ES_FALLBACK | true or false | When Kendra FAQ is enabled, but does not return an answer then query ElasticSearch
 | ENABLE_KENDRA_WEB_INDEXER | true or false | Enables the web indexer (TODO Link to documentation page)
 | KENDRA_INDEXER_URLS | comma separated list | List of web addresses QnABot should crawl and Index with Kendra (TODO Link to documentation page)
-| KENDRA_INDEXER_SCHEDULE | (CloudWatch Rate Syntax)(https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html) | Interval Indexer should crawl
+| KENDRA_INDEXER_SCHEDULE | (CloudWatch Rate Syntax)[https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html) | Interval Indexer should crawl
 | KENDRA_WEB_PAGE_INDEX | Kendra Index Id | The index to use for the web crawler, a (custom data source)[https://docs.aws.amazon.com/kendra/latest/dg/data-source-custom.html] will automatically be added to the specified index.  
 | ERRORMESSAGE | text | Response to the user when a processing error occurs
 | EMPTYMESSAGE | text | Response to the user when an answer could not be found
@@ -53,7 +53,7 @@
 | REDACTING_REGEX | regex expression | Redacts expressions matching regex from logs
 | PII_REJECTION_ENABLED | true or false | Enables PII Rejection
 | PII_REJECTION_QUESTION | text  | If PII is found, the user's request (question) will change to this phrase
-| PII_REJECTION_WITH_COMPREHEND: | true or false | Enable's [Personal Identifiable Information](https://aws.amazon.com/blogs/machine-learning/detecting-and-redacting-pii-using-amazon-comprehend/) detection with Amazon Comprehend
+| PII_REJECTION_WITH_COMPREHEND: | true or false | Enable's (Personal Identifiable Information)[https://aws.amazon.com/blogs/machine-learning/detecting-and-redacting-pii-using-amazon-comprehend/] detection with Amazon Comprehend
 | PII_REJECTION_REGEX | regex expression | Used to find PII based on a regex
 | PII_REJECTION_IGNORE_TYPES | comma separated list of (PII Entity Categories)[https://aws.amazon.com/blogs/machine-learning/detecting-and-redacting-pii-using-amazon-comprehend/] | Do not detect the specified list of entity types
 | DISABLE_CLOUDWATCH_LOGGING | true or false | Disable all logging in fulfillment es query handler lambda. does not disable logging from Lambda Hooks or Conditional Chaining Lambda functions
