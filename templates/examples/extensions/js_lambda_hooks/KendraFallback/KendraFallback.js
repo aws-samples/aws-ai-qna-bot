@@ -491,7 +491,7 @@ async function routeKendraRequest(event, context) {
   
         hit= await translate.translate_hit(hit, usrLang, event.req);
         //Translate places extra space between the * in the header
-        hit.markdown = hit.markdown.replace(" *").replace("* ");
+       // hit.markdown = hit.markdown.replace(" *").replace("* ");
 
       } else {
         console.log("User Lang is en, Autotranslate not required.");
