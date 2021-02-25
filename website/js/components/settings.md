@@ -2,7 +2,7 @@
 
 | Setting | Valid values | Description |
 |---------|--------------|--------------|
-| ENABLE_DEBUG_RESPONSES | true or false | Determines whethere to log original English responses and translated responses for debugging
+| ENABLE_DEBUG_RESPONSES | true or false | Determines whether to log original English responses and translated responses for debugging
 | ES_USE_KEYWORD_FILTERS | true or false | Determines whether to detect keywords from Comprehend when searching for answers
 | ES_EXPAND_CONTRACTIONS | JSON format   | TODO: Wording?
 | ES_KEYWORD_SYNTAX_TYPES | comma separate list <br/> See [Analyze Syntax](https://docs.aws.amazon.com/comprehend/latest/dg/how-syntax.html) | A list of tokens representing parts of speech identified by Amazon Comprehend for matching questions
@@ -10,43 +10,41 @@
 | ES_MINIMUM_SHOULD_MATCH |"2<75%" <br/> See [query-dsl-minimum-should-match](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-minimum-should-match.html) for syntax |  Determines how close a question should match to return a hit
 | ES_NO_HITS_QUESTION | text | The question QnABot should use when it cannot find an answer
 | ES_USE_FUZZY_MATCH  | true or false | Determines whether QnABot should return answers similar to the question asked. See [Fuzzy Query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html) for more information
-
-
-    ES_PHRASE_BOOST: "4", //TODO: Ask Bob
-    ES_SCORE_ANSWER_FIELD: "false",//TODO: Ask Bob
-    ENABLE_SENTIMENT_SUPPORT: "true", //Determines whether to use Comprehend for sentiment analysis.  Refer to https://docs.aws.amazon.com/comprehend/latest/dg/how-sentiment.html 
-    ENABLE_MULTI_LANGUAGE_SUPPORT: "false", //User can override and set to true to Enable Multilanguage support
-    ENABLE_CUSTOM_TERMINOLOGY: "false",
-    CUSTOM_TERMINOLOGY_SOURCES: "", //A comma separated list of custom terminology dictionaries https://docs.aws.amazon.com/translate/latest/dg/how-custom-terminology.html 
-    MINIMUM_CONFIDENCE_SCORE: 0.6, //User can override this value to set the minimum confidence they accept using CustomQnABotSettings
-    ALT_SEARCH_KENDRA_INDEXES: [], // Add Kendra index to array to enable Amazon Kendra as a fallback source of answers
-    ALT_SEARCH_KENDRA_S3_SIGNED_URLS: "true", // If S3 document URL is in the search result, convert to signed URL. Make sure IAM ExtensionLambdaRole has access to S3 objects in Kendra index (default role grants access to buckets starting with name QNA or qna).
-    ALT_SEARCH_KENDRA_S3_SIGNED_URL_EXPIRE_SECS: 300, // Expiry time for signed URLs
-    ALT_SEARCH_KENDRA_MAX_DOCUMENT_COUNT: 2, // limit number of document search results returned by Kendra fallback\
-    ALT_SEARCH_KENDRA_TOP_ANSWER_MESSAGE: "Amazon Kendra suggested answer.",
-    ALT_SEARCH_KENDRA_ANSWER_MESSAGE: "While I did not find an exact answer, these search results from Amazon Kendra might be helpful.", //Message displayed when a search comes from Kemdra
-    KENDRA_FAQ_INDEX: "", // Kendra Index specific for FAQ for if Kendra FAQ sync is enabled
-    KENDRA_FAQ_CONFIG_MAX_RETRIES: 8,    //User can override number of max retries in AWS SDK configurations
-    KENDRA_FAQ_CONFIG_RETRY_DELAY: 600,  //User can override number of miliseconds delay between retries in AWS SDK configurations
-    KENDRA_FAQ_ES_FALLBACK: "true", // Optional ElasticSearch Fallback engine for if KendraFAQ fails
-    ENABLE_KENDRA_WEB_INDEXER:"false", //Enables web crawler -- indexes pages specified by KENDRA_INDEXER_URLS
-    KENDRA_INDEXER_URLS: "",//comma separated list of urls for Kendra to crawler
-    KENDRA_INDEXER_SCHEDULE: "rate(1 day)",//See https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html for valid expressions
-    KENDRA_WEB_PAGE_INDEX: "",//The index to use for the web crawler, a custom data source will automatically be added to the specified index.  The index will automatically be added to ALT_SEARCH_KENDRA_INDEXES
-    ERRORMESSAGE: "Unfortunately I encountered an error when searching for your answer. Please ask me again later.",
-    EMPTYMESSAGE: "You stumped me! Sadly I don't know how to answer your question.",
-    DEFAULT_ALEXA_LAUNCH_MESSAGE: "Hello, Please ask a question",
-    DEFAULT_ALEXA_REPROMPT: "Please either answer the question, ask another question or say Goodbye to end the conversation.",
-    DEFAULT_ALEXA_STOP_MESSAGE: "Goodbye",
-    SMS_HINT_REMINDER_ENABLE: "true",
-    SMS_HINT_REMINDER: " (Feedback? Reply THUMBS UP or THUMBS DOWN. Ask HELP ME at any time)",
-    SMS_HINT_REMINDER_INTERVAL_HRS: "24",
-    IDENTITY_PROVIDER_JWKS_URLS: [],  // User can override this empty list to add trusted IdPs (eg from Lex-Web-UI)
-    ENFORCE_VERIFIED_IDENTITY: "false", // set to true to make QnABot require verified identity from client
-    NO_VERIFIED_IDENTITY_QUESTION: "no_verified_identity", // if user identity cannot be verified, replace question string with this. 
-    ELICIT_RESPONSE_MAX_RETRIES: 3, // Number of times an elicitResponse LexBot can be called before giving up when the Bot returns Failed
-    ELICIT_RESPONSE_RETRY_MESSAGE: "Please try again?", // Default retry message when working with LexBot
-    ELICIT_RESPONSE_BOT_FAILURE_MESSAGE: "Your response was not understood. Please start again.", // Message used when maximum number of retries is exceeded
+| ES_PHRASE_BOOST | integer | TODO
+| ES_SCORE_ANSWER_FIELD | true or false | TODO
+| ENABLE_SENTIMENT_SUPPORT | true or false | Enables [Amazon Comprehend] be used for sentiment analysys
+| ENABLE_MULTI_LANGUAGE_SUPPORT | true or false | Enable or Disable Amazon Translate support
+| ENABLE_CUSTOM_TERMINOLOGY| true or false |  Enable support for installed [Custom Terminology](https://aws.amazon.com/blogs/machine-learning/introducing-amazon-translate-custom-terminology/) files when using Amazon Translate
+| CUSTOM_TERMINOLOGY_SOURCES | comma separated list | If configured only the terminologies specified will be used.
+| MINIMUM_CONFIDENCE_SCORE | decimal between 0.0 and 0,99 | TODO
+| ALT_SEARCH_KENDRA_INDEXES | An Array of comma separated Ids |  A list of one or more [Amazon Kendra](https://aws.amazon.com/kendra/) indexes used for Kendra fallback
+| ALT_SEARCH_KENDRA_S3_SIGNED_URLS | true or false | Enables (signed S3)[https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html] Urls for Amazon Kendra results.  If enabled, allows support for Kendra documents which are not publicly accessible. 
+| ALT_SEARCH_KENDRA_S3_SIGNED_URL_EXPIRE_SECS | integer | Determines length of time in seconds before a signed S3 Url returned by an Amazon Kendra response is invalid (TODO Wording)
+| ALT_SEARCH_KENDRA_MAX_DOCUMENT_COUNT | integer | Number of documents returned by Amazon Kendra fallback
+| ALT_SEARCH_KENDRA_TOP_ANSWER_MESSAGE | string | Heading when the (top answer)[https://docs.aws.amazon.com/kendra/latest/dg/response-types.html] is found by Amazon Kendra 
+| ALT_SEARCH_KENDRA_ANSWER_MESSAGE | string | Heading when a (Document)[https://docs.aws.amazon.com/kendra/latest/dg/response-types.html] is returned by Amazon Kendra
+| KENDRA_FAQ_INDEX | Kendra Index Id | Kendra Index to use sync Elastic Search questions and answers 
+| KENDRA_FAQ_CONFIG_MAX_RETRIES | integer | Number of times to retry syncing FAQ's when a throttling error occurs
+| KENDRA_FAQ_CONFIG_RETRY_DELAY | integer | Amount of time to wait in seconds between attempts to retry syncing 
+| KENDRA_FAQ_ES_FALLBACK | true or false | TODO
+| ENABLE_KENDRA_WEB_INDEXER | true or false | Enables the web indexer (TODO Link to documentation page)
+| KENDRA_INDEXER_URLS | comma separated list | List of web addresses QnABot should crawl and Index with Kendra (TODO Link to documentation page)
+| KENDRA_INDEXER_SCHEDULE | (CloudWatch Rate Syntax)https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html | Interval Indexer should crawl
+| KENDRA_WEB_PAGE_INDEX | Kendra Index Id | The index to use for the web crawler, a (custom data source)[https://docs.aws.amazon.com/kendra/latest/dg/data-source-custom.html] will automatically be added to the specified index.  
+| ERRORMESSAGE | text | Response to the user when a processing error occurs
+| EMPTYMESSAGE | text | Response to the user when an answer could not be found
+| DEFAULT_ALEXA_LAUNCH_MESSAGE | text | Initial greeting when using Alexa
+| DEFAULT_ALEXA_REPROMPT | text | TODO 
+| DEFAULT_ALEXA_STOP_MESSAGE | text |  User response to end session with Alexa
+| SMS_HINT_REMINDER_ENABLE | true or false | TODO
+| SMS_HINT_REMINDER |  text | TODO 
+| SMS_HINT_REMINDER_INTERVAL_HRS | integer | TODO
+| IDENTITY_PROVIDER_JWKS_URLS | array of ??? |  User can override this empty list to add trusted IdPs (eg from Lex-Web-UI)
+| ENFORCE_VERIFIED_IDENTITY | true or false |  Set to true to make QnABot require verified identity from client
+| NO_VERIFIED_IDENTITY_QUESTION | text | If user identity cannot be verified, replace question string with this. 
+| ELICIT_RESPONSE_MAX_RETRIES | integer | Number of times an elicitResponse LexBot can be called before giving up when the Bot returns Failed
+| ELICIT_RESPONSE_RETRY_MESSAGE | text |  Default retry message when working with LexBot
+| ELICIT_RESPONSE_BOT_FAILURE_MESSAGE | text |  Message used when maximum number of retries is exceeded
     ELICIT_RESPONSE_DEFAULT_MSG: "Ok. ", // Ok. with an intentional blank space after the period
     CONNECT_IGNORE_WORDS: "", // Throw error if connect client sends individual characters not processable by elastic search
     CONNECT_ENABLE_VOICE_RESPONSE_INTERRUPT: "false", // Return bot response in session attribute to enable contact flow to use response as an interruptible prompt.
