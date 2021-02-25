@@ -12,7 +12,7 @@ var default_settings = {
     ENABLE_SENTIMENT_SUPPORT: "true", //Determines whether to use Comprehend for sentiment analysis.  Refer to https://docs.aws.amazon.com/comprehend/latest/dg/how-sentiment.html 
     ENABLE_MULTI_LANGUAGE_SUPPORT: "false", //User can override and set to true to Enable Multilanguage support
     ENABLE_CUSTOM_TERMINOLOGY: "false",
-    CUSTOM_TERMINOLOGY_SOURCES: "pets", //A comma separated list of custom terminology dictionaries https://docs.aws.amazon.com/translate/latest/dg/how-custom-terminology.html 
+    CUSTOM_TERMINOLOGY_SOURCES: "", //A comma separated list of custom terminology dictionaries https://docs.aws.amazon.com/translate/latest/dg/how-custom-terminology.html 
     MINIMUM_CONFIDENCE_SCORE: 0.6, //User can override this value to set the minimum confidence they accept using CustomQnABotSettings
     ALT_SEARCH_KENDRA_INDEXES: [], // Add Kendra index to array to enable Amazon Kendra as a fallback source of answers
     ALT_SEARCH_KENDRA_S3_SIGNED_URLS: "true", // If S3 document URL is in the search result, convert to signed URL. Make sure IAM ExtensionLambdaRole has access to S3 objects in Kendra index (default role grants access to buckets starting with name QNA or qna).

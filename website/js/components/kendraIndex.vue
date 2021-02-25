@@ -7,7 +7,8 @@ v-container#page-import(column, grid-list-md)
         v-card-text(v-if="kendraIndexerEnabled == true")
           p Current Status {{ status }}
         v-card-text(v-if="!kendraIndexerEnabled")
-          p The following settings should be set 
+          p The following settings should be configured.
+          p  
           p ENABLE_KENDRA_WEB_INDEXER - should be set to true
           p KENDRA_WEB_PAGE_INDEX - the ID of the Kendra Index used to store the content of the web pages
           p KENDRA_INDEXER_URLS - a comma separated list of web pages to index
