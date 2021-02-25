@@ -1,7 +1,7 @@
 ## QnABot Settings
 
 | Setting | Valid values | Description |
----------------------------------------
+|---------|--------------|--------------|
 | ENABLE_DEBUG_RESPONSES | true or false | Determines whethere to log original English responses and translated responses for debugging
 | ES_USE_KEYWORD_FILTERS | true or false | Determines whether to detect keywords from Comprehend when searching for answers
 | ES_EXPAND_CONTRACTIONS | JSON format   | TODO: Wording?
