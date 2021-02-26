@@ -29,8 +29,8 @@
 | KENDRA_FAQ_ES_FALLBACK | true or false | When Kendra FAQ is enabled, but does not return an answer then query ElasticSearch
 | ENABLE_KENDRA_WEB_INDEXER | true or false | Enables the web indexer (TODO Link to documentation page)
 | KENDRA_INDEXER_URLS | comma separated list | List of web addresses QnABot should crawl and Index with Kendra (TODO Link to documentation page)
-| KENDRA_INDEXER_SCHEDULE | hhh (CloudWatch Rate Syntax)[https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html] | Interval Indexer should crawl
-| KENDRA_WEB_PAGE_INDEX | Kendra Index Id | The index to use for the web crawler, a (custom data source)[https://docs.aws.amazon.com/kendra/latest/dg/data-source-custom.html] will automatically be added to the specified index.  
+| KENDRA_INDEXER_SCHEDULE | [CloudWatch Rate Syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html) | Interval Indexer should crawl
+| KENDRA_WEB_PAGE_INDEX | Kendra Index Id | The index to use for the web crawler, a [custom data source](https://docs.aws.amazon.com/kendra/latest/dg/data-source-custom.html) will automatically be added to the specified index.  
 | ERRORMESSAGE | text | Response to the user when a processing error occurs
 | EMPTYMESSAGE | text | Response to the user when an answer could not be found
 | DEFAULT_ALEXA_LAUNCH_MESSAGE | text | Initial greeting when using Alexa
