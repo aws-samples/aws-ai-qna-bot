@@ -131,7 +131,7 @@ Deletes the objects from S3 to allow the bucket to be deleted when the stack is 
 
 ## CFNLambdaRole (QnABot Stack)
 
-CFNLambda
+### CFNLambda
 
 A custom CloudFormation resource:
 
@@ -149,21 +149,21 @@ CloudFormation will not recognize that a referenced zip file for a Lambda has ch
 
 Deletes contents of the bucket when QnABot is uninstalled so the bucket can be deleted
 
-ExampleWriteLambda 
+### ExampleWriteLambda 
 
 This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.
 
-## EXTUiImportLambda 
+### EXTUiImportLambda 
 
 Custom CF resource that expands resources for custom extensions packages - in the Imports section of Tools
 
-VersionLambda
+### VersionLambda
 
 Reads version of file based on CF parameter
 
 ## ESProxyLambdaRole
 
-ESProxyLambda
+### ESProxyLambda
 
 Processes user’s questions through a pipeline – used mostly in Content Designer
 
@@ -177,39 +177,37 @@ Uses Kendra FAQ feature (see above)
 
 Supports “Rebuild Lex” functionality
 
-Uses Polly#
-
 Uses KMS  to decrypt sessions encrypted by the quiz functionality 
 
-ESCleaningLambda 
+### ESCleaningLambda 
 
-Schedule job to expire metrics data from ElasticSearch
+Scheduled job to expire metrics data from ElasticSearch
 
-ESCFNProxyLambda 
+### ESCFNProxyLambda 
 
 Proxies requests from API Gateway to ElasticSearc 
 
-ESQidLambda 
+### ESQidLambda 
 
 Designed to just return a question ID – may be used by guided navigation package – research whether it is deprecated
 
-ESQueryLambda 
+### ESQueryLambda 
 
 Same functionality as ESProxyLambda used mostly at runtime
 
-UtteranceLambda 
+### UtteranceLambda 
 
 Returns slot types from the LexBot
 
 ## ESLoginLambdaRole
 
-ESLoggingLambda
+### ESLoggingLambda
 
 Sends events to ElasticSearch using Firehose 
 
 ## ExampleLambdaRole
 
-ExampleJSLambdaQuiz 
+### ExampleJSLambdaQuiz 
 
 Showcases using QnABot for quizzes
 
@@ -217,41 +215,41 @@ KMS for encrypting questions - The quiz lambda sends the answer in a session att
 
 Example of creating custom functionality using JavaScript.  It is not used by QnABot
 
-ExamplePythonLambda 
+### ExamplePythonLambda 
 
-ExamplePythonLambdaConnect
+### ExamplePythonLambdaConnect
 
-demonstrating how QnABot can be asked by a user for a live agent based phone callback
+demonstrates how QnABot can be asked by a user for a live agent based phone callback
 
-ExamplePythonLambdaFeedback 
+### ExamplePythonLambdaFeedback 
 
 Thumbs Up/Thumbs Down support
 
 Uses a KMS/CMK to encrypt messages before sending them to Firehose
 
-ExamplePythonLambdaNext 
+### ExamplePythonLambdaNext 
 
 Demonstrates branching questions – going to the next step in a branched workflow
 
-ExamplePythonLambdaPrevious 
+### ExamplePythonLambdaPrevious 
 
 Demonstrates branching questions – going to the next step in a branched workflow
 
-ExamplePythonLambdahello
+### ExamplePythonLambdahello
 
 This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.
 
-ExampleS3ListPhotoLambda 
+### ExampleS3ListPhotoLambda 
 
-## ExampleLambdaRole
+### ExampleLambdaRole
 
-ExampleJSLambdaHook 
+### ExampleJSLambdaHook 
 
 This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.
 
 ## KendraCrawlerRole
 
-KendraCrawler 
+### KendraCrawler 
 
 Reads settings from ParameterStore
 
@@ -263,7 +261,7 @@ Creates custom Kendra Data Source and indexes web pages
 
 This role will be used for all “extensions” to the question processing pipeline. Currently we have the Lambda(s) below configured
 
-KendraFallback
+### KendraFallback
 
 When enabled, if a question cannot be answered via the ElasticSearch query, QnABot searches the configured Kendra index(es)
 
@@ -273,29 +271,29 @@ When configured via the PublicOrPrivate CF parameter, it is attached to a VPC
 
 Translates questions and answers between English and the users’s native language
 
-EXTCustomPyHook 
+### EXTCustomPyHook 
 
 Sample custom python Lambda hook
 
 ## S3ListLambdaRole
 
-ExampleS3ListLambda
+### ExampleS3ListLambda
 
 Some of our samples embed images.  ExampleS3ListLambda provides endpoints to the images in S3 via APIGW
 
-S3ListLambda 
+### S3ListLambda 
 
 Users can import example files in the Content Designer stored on S3. This Lambda returns the URL of the API Gateway S3 proxy request to retrieve the file.
 
 ## ExportRole
 
-ExportStepLambda
+### ExportStepLambda
 
 Used as part of the export questions functionality.
 
 ## KendraSyncRole
 
-KendraSyncLambda
+### KendraSyncLambda
 
 Syncs curated questions stored in ElasticSearch to Kendra FAQ
 
@@ -309,13 +307,13 @@ When calling Kendra to sync FAQs, a role needs to be passed to the command to al
 
 ## TranslateRole
 
-TranslateLambda
+### TranslateLambda
 
 used to managed importing Translate Custom Terminologies
 
 ## ConnectRole
 
-ConnectLambda
+### ConnectLambda
 
 Supports the Connect wizard. 
 
@@ -325,7 +323,7 @@ Lambda Write permission (Not needed – SIM created in open source backlog)
 
 ## FullfillmentLambdaRole
 
-FullfillmentLambda
+### FullfillmentLambda
 
 Orchestrates processing pipeline for questions and answers
 
@@ -345,11 +343,11 @@ Parameter Store (see Services section)
 
 ## ImportRole
 
-ImportStartLambda
+### ImportStartLambda
 
 Starts the import question and answer process 
 
-ImportStepLambda
+### ImportStepLambda
 
 Supports the import question process in the Content Designer
 
@@ -359,43 +357,43 @@ Writes a status file that is retrieve via an API GW S3  Proxy
 
 ## LexBuildLambdaRole
 
-LexBuildLambda 
+### LexBuildLambda 
 
 Generates additional NLP training data for Lex using questions from questions added via the content designer
 
 Reads questions from ElasticSearch to rebuild Lex model
 
-LexBuildLambdaPoll 
+### LexBuildLambdaPoll 
 
 Polls Lex service to determine build completion status
 
 Stores status file in S3 read by API GW S3 proxy endpoint.
 
-LexBuildLambdaStart 
+### LexBuildLambdaStart 
 
 Starts Lex Rebuild process
 
 Stores status file in S3 read by API GW S3 proxy endpoint
 
-LexProxyLambdaRole
+## LexProxyLambdaRole
 
-LexProxyLambda
+### LexProxyLambda
 
 Proxies Lex requests from API Gateway to Lex
 
-LexStatusLambda 
+### LexStatusLambda 
 
 Reads status of the Lex Build process from status file S3 object and returns the status
 
-SignupLambdaRole – not used (deprecated)
+## SignupLambdaRole – not used (deprecated)
 
-MessageLambda 
+### MessageLambda 
 
-SignupLambda 
+## SignupLambda 
 
-SchemaLambdaRole
+### SchemaLambdaRole
 
-SchemaLambda 
+## SchemaLambda 
 
 Supports the quiz functionality
 
@@ -403,7 +401,7 @@ ElasticSearchService
 
 ## TestAllRole
 
-TestAllStepLambda 
+### TestAllStepLambda 
 
 Supports “Test All Questions” step in the Content Designer
 
