@@ -45,7 +45,7 @@
 | ELICIT_RESPONSE_MAX_RETRIES | integer | Number of times an elicitResponse LexBot can be called before giving up when the Bot returns Failed
 | ELICIT_RESPONSE_RETRY_MESSAGE | text |  Default retry message when working with LexBot
 | ELICIT_RESPONSE_BOT_FAILURE_MESSAGE | text |  Message used when maximum number of retries is exceeded
-| ELICIT_RESPONSE_DEFAULT_MSG: text | Ok. with an intentional blank space after the period
+| ELICIT_RESPONSE_DEFAULT_MSG| text | 
 | CONNECT_IGNORE_WORDS | comma separated list | Throw error if connect client sends individual characters not processable by elastic search
 | CONNECT_ENABLE_VOICE_RESPONSE_INTERRUPT | true or false | Return bot response in session attribute to enable contact flow to use response as an interruptible prompt.
 | CONNECT_NEXT_PROMPT_VARNAME | text | Name of session var to use for next prompt

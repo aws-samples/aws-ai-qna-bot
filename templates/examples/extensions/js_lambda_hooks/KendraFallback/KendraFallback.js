@@ -491,7 +491,6 @@ async function routeKendraRequest(event, context) {
   
         hit= await translate.translate_hit(hit, usrLang, event.req);
         //Translate places extra space between the * in the header
-       // hit.markdown = hit.markdown.replace(" *").replace("* ");
 
       } else {
         console.log("User Lang is en, Autotranslate not required.");
@@ -516,6 +515,10 @@ async function routeKendraRequest(event, context) {
     event.res.session.appContext.altMessages.ssml = hit.ssml;
     event.res.plainMessage = hit.a;
     event.res.message = hit.markdown;
+    //Translate puts a space between text and the * not valid markdown
+    const regex = /\s\*\s+$/m;
+
+    event.res.session.appContext.altMessages.markdown = hit.markdown.replace(regex, '*')
     
     
     _.set(event,"res.answerSource",'KENDRA');
@@ -525,7 +528,7 @@ async function routeKendraRequest(event, context) {
         _.set(event,"res.session.qnabotcontext.kendra.kendraResultId",kendraResultId) ;
 //        _.set(event,"res.session.qnabotcontext.kendra.kendraResponsibleQid",event.res.result.qid) ;
     }
-    
+
 
     return event;
 }
