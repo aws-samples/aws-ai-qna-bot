@@ -1,130 +1,91 @@
 # Roles
-Master Stack - 20
+- Master Stack - 20
+- Example Stack - 2
+- Export - 6
+- Import - 1
+- TestAll - 1
+- Bootstrap  (separate stack used for deployments) - 1
 
-Example Stack - 2
-
-Export - 6
-
-Import - 1
-
-TestAll - 1
-
-Bootstrap  (separate stack used for deployments) - 1
-
-Total - 30
-
+*Total - 30*
 # Resources
 ## Cognito 
-User Pool - authenticated login to Content Designer
-
-Identity Pool - supports API Gateway IAM authentication when calling supported Lambdas
-
+- User Pool - authenticated login to Content Designer
+- Identity Pool - supports API Gateway IAM authentication when calling supported Lambdas
 ## S3
+- AssetBucket - additional components used to extend QnABot
+- BuildStatusBucket - used for staging various assets during deployment
+- ExportBucket - Used for staging files exported from QnABot.  API Gateway is used a proxy for the bucket
+- ImportBucket - Used for staging files imported into QnABot
+- MetricsBucket - All captured usage data is sent to both Elastic Search and this bucket via Kinesis 
 
-AssetBucket - additional components used to extend QnABot
-
-BuildStatusBucket - used for staging various assets during deployment
-
-ExportBucket - Used for staging files exported from QnABot.  API Gateway is used a proxy for the bucket
-
-ImportBucket - Used for staging files imported into QnABot
-
-MetricsBucket - All captured usage data is sent to both Elastic Search and this bucket via Kinesis Firehose
-
-TestAllBucket - Results from “Test all” functionality
-
-Bucket - HTML/CSS/Javascript used by the Content Designer
+## Firehose
+- TestAllBucket - Results from “Test all” functionality
+- Bucket - HTML/CSS/Javascript used by the Content Designer
 
 ## APIGateway
-
-Lambda 
-
-S3
-
-SNS - APIGW has a 30 second timeout. The Kendra web crawler takes longer than 30 seconds.  The Content Designer calls the Crawler API to trigger an SNS message that starts the crawler Lambda
-
+- Lambda 
+- S3
+- SNS - APIGW has a 30 second timeout. The Kendra web crawler takes longer than 30 seconds.  The Content Designer calls the Crawler API to trigger an SNS message that starts the crawler Lambda
 ## DynamoDB
-Stores user session information.
-
+- Stores user session information.
 ## ElasticSearch
-Stores curated questions and answers
-
-Stores usage metrics
+- Stores curated questions and answers
+- Stores usage metrics
 
 ## Lambda (42 functions)
 - Master 21
 - Example  13
 - Export 6
 - Import 2
-
-
 ## Lex
-The chatbot engine
+- The chatbot engine
 
 ## SNS
-APIGW has a 30 second timeout. The Kendra web crawler takes longer than 30 seconds.  The Content Designer calls the Crawler API to trigger an SNS message that starts the crawler Lambda
+- APIGW has a 30 second timeout. The Kendra web crawler takes longer than 30 seconds.  The Content Designer calls the Crawler API to trigger an SNS message that starts the crawler Lambda
 
 ## KMS
-There is an optional utility script which adds KMS/CMK encryption to many resources.  The list below is for the default use cases
-
-The quiz workflow - not used by RhodeIsland
+- There is an optional utility script which adds KMS/CMK encryption to many resources.  The list below is for the default use cases
+- The quiz workflow - not used by RhodeIsland
 
 ## CloudWatch Events
-
-KendraCrawlerRule - Schedules the Kendra Crawler based on setting
-
-CloudWatchEventRule - triggered when the Parameter Store custom setting is changed. It in turns triggers the KendraCrawler Lambda that configures the KendraCrawlerRule to schedule the crawler to run
+- KendraCrawlerRule - Schedules the Kendra Crawler based on setting
+- CloudWatchEventRule - triggered when the Parameter Store custom setting is changed. It in turns triggers the KendraCrawler Lambda that configures the KendraCrawlerRule to schedule the crawler to run
 
 ## CloudWatch Logs
-Lambda 
-
-Kendra
+- Lambda 
+- Kendra
 
 ## Comprehend
-Sentiment Analysis - detects whether a question was positive, negative, neutral or mixed
-
-Language Detection - detects the user’s language, translates the text to English and translates the response from English to the user’s language
-
-Analyze Syntax - detects parts of speech in a sentence and searches for questions in ElasticSearch based on words that match specified parts of speech – i.e, Nouns, Adjectives, Verbs, etc
-
-PII Detection - detects whether a question contains Personally Identifiable Information and allows an administrator  to instruct QnABot to reject a question that contains certain types of PII.
-
+- Sentiment Analysis - detects whether a question was positive, negative, neutral or mixed
+- Language Detection - detects the user’s language, translates the text to English and translates the response from English to the user’s language
+- Analyze Syntax - detects parts of speech in a sentence and searches for questions in ElasticSearch based on words that match specified parts of speech – i.e, Nouns, Adjectives, Verbs, etc
+- PII Detection - detects whether a question contains Personally Identifiable Information and allows an administrator  to instruct QnABot to reject a question that contains certain types of PII.
 ## Kendra
-Kendra FAQ - Questions entered into QnABot are synchronized with Kendra FAQ for better matching
-
-Kendra Documents - QnABot has an integrated web crawler, web page contents are indexed with Kendra
+- Kendra FAQ - Questions entered into QnABot are synchronized with Kendra FAQ for better matching
+- Kendra Documents - QnABot has an integrated web crawler, web page contents are indexed with Kendra
 
 ## Parameter Store
-DefaultQnABotSettings - default settings for QnABot
-
-CustomQnABotSettings - any settings that are changed from the default by the user.  QnABot merges DefaultQnABotSettings and CustomQnABotSettings at runtime
+- DefaultQnABotSettings - default settings for QnABot
+- CustomQnABotSettings - any settings that are changed from the default by the user.  QnABot merges DefaultQnABotSettings and CustomQnABotSettings at runtime
 
 ## S3
  Static assets (HTML, CSS, JavaScript)  related to the Content Designer
 
 Holding area for data transfers between different processes
-
 ## Translate
 
-Translates user’s questions to and from English as necessary
-
-Custom Terminology - An administrator can import a CSV file with language pairs to override default translations
+- Translates user’s questions to and from English as necessary
+- Custom Terminology - An administrator can import a CSV file with language pairs to override default translations
 
 ## Polly
 
-Convert voice to text
-
-Convert text to voice
-
+- Convert voice to text
+- Convert text to voice
 ## Kinesis Firehose
-
-Transfers messages from fulfillment lambda to Kinesis Firehose to the ElasticSearch index for Kibana and S3.
-
-Used to store feedback from the client to Kibana
-
+- Transfers messages from fulfillment lambda to Kinesis Firehose to the ElasticSearch index for Kibana and S3.
+- Used to store feedback from the client to Kibana
 
 # Roles
-
 ## CFNLambdaRole (Bootstrap Stack)
 
 *Deletes the objects from S3 to allow the bucket to be deleted when the stack is deleted*
