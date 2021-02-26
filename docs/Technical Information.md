@@ -1,3 +1,5 @@
+
+
 # Roles
 - Master Stack - 20
 - Example Stack - 2
@@ -66,12 +68,12 @@
 
 ## Parameter Store
 - DefaultQnABotSettings - default settings for QnABot
-- CustomQnABotSettings - any settings that are changed from the default by the user.  QnABot merges DefaultQnABotSettings and CustomQnABotSettings at runtime
+- CustomQnABotSettings - any settings that are changed from th
+e default by the user.  QnABot merges DefaultQnABotSettings and CustomQnABotSettings at runtime
 
 ## S3
- Static assets (HTML, CSS, JavaScript)  related to the Content Designer
-
-Holding area for data transfers between different processes
+- Static assets (HTML, CSS, JavaScript)  related to the Content Designer
+- Holding area for data transfers between different processes
 ## Translate
 
 - Translates user’s questions to and from English as necessary
