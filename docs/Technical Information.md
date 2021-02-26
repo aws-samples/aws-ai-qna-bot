@@ -127,259 +127,203 @@ Used to store feedback from the client to Kibana
 
 ## CFNLambdaRole (Bootstrap Stack)
 
-Deletes the objects from S3 to allow the bucket to be deleted when the stack is deleted
+*Deletes the objects from S3 to allow the bucket to be deleted when the stack is deleted*
 
 ## CFNLambdaRole (QnABot Stack)
 
 ### CFNLambda
 
-A custom CloudFormation resource:
+*A custom CloudFormation resource*
 
-Deploys APIGateway resources
-
-Creates and manages Cognito Identity Pools
-
-Updates ElasticSearch resource 
-
-Creates LexBot
+- Deploys APIGateway resources
+- Creates and manages Cognito Identity Pools
+- Updates ElasticSearch resources 
+- Creates LexBot
 
 S3 –  Unzips assets stored in S3
 
-CloudFormation will not recognize that a referenced zip file for a Lambda has changed using our deployment process.  This creates a new S3 version of the object.
+*CloudFormation will not recognize that a referenced zip file for a Lambda has changed using our deployment process.  This creates a new S3 version of the object.*
 
-Deletes contents of the bucket when QnABot is uninstalled so the bucket can be deleted
+- Deletes contents of the bucket when QnABot is uninstalled so the bucket can be deleted
 
 ### ExampleWriteLambda 
 
-This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.
+*This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.*
 
 ### EXTUiImportLambda 
 
-Custom CF resource that expands resources for custom extensions packages - in the Imports section of Tools
+*Custom CF resource that expands resources for custom extensions packages - in the Imports section of Tools*
 
 ### VersionLambda
 
-Reads version of file based on CF parameter
+*Reads versions of file based on CF parameter.  It forces CF to recognize a new version of the Lambda code so it will update the resource*
 
 ## ESProxyLambdaRole
 
 ### ESProxyLambda
 
-Processes user’s questions through a pipeline – used mostly in Content Designer
+*Processes user’s questions through a pipeline – used mostly in Content Designer*
 
-Reads settings from SSM Parameter Store
-
-Processes question with Comprehend (see above)
-
-Translates questions and answer if necessary (see above)
-
-Uses Kendra FAQ feature (see above)
-
-Supports “Rebuild Lex” functionality
-
-Uses KMS  to decrypt sessions encrypted by the quiz functionality 
+- Reads settings from SSM Parameter Store
+- Processes question with Comprehend (see above)
+- Translates questions and answer if necessary (see above)
+- Uses Kendra FAQ feature (see above)
+- Supports “Rebuild Lex” functionality
+- Uses KMS  to decrypt sessions encrypted by the quiz functionality 
 
 ### ESCleaningLambda 
-
-Scheduled job to expire metrics data from ElasticSearch
+*Scheduled job to expire metrics data from ElasticSearch*
 
 ### ESCFNProxyLambda 
 
-Proxies requests from API Gateway to ElasticSearc 
+*Proxies requests from API Gateway to ElasticSearch*
 
 ### ESQidLambda 
-
-Designed to just return a question ID – may be used by guided navigation package – research whether it is deprecated
+*Designed to just return a question ID – may be used by guided navigation package – research whether it is deprecated*
 
 ### ESQueryLambda 
-
-Same functionality as ESProxyLambda used mostly at runtime
+*Same functionality as ESProxyLambda used mostly at runtime*
 
 ### UtteranceLambda 
-
-Returns slot types from the LexBot
+*Returns slot types from the LexBot*
 
 ## ESLoginLambdaRole
 
 ### ESLoggingLambda
-
-Sends events to ElasticSearch using Firehose 
+*Sends events to ElasticSearch using Firehose*
 
 ## ExampleLambdaRole
 
 ### ExampleJSLambdaQuiz 
-
-Showcases using QnABot for quizzes
-
-KMS for encrypting questions - The quiz lambda sends the answer in a session attribute, and we didn't want people cheating by looking inside the session attribute.. we use KMS to encrypt it.
-
-Example of creating custom functionality using JavaScript.  It is not used by QnABot
+*Showcases using QnABot for quizzes*
+- KMS for encrypting questions - The quiz lambda sends the answer in a session attribute, and we didn't want people cheating by looking inside the session attribute.. we use KMS to encrypt it.
+- Example of creating custom functionality using JavaScript.  It is not used by QnABot
 
 ### ExamplePythonLambda 
-
 ### ExamplePythonLambdaConnect
-
-demonstrates how QnABot can be asked by a user for a live agent based phone callback
+*demonstrates how QnABot can be asked by a user for a live agent based phone callback*
 
 ### ExamplePythonLambdaFeedback 
-
-Thumbs Up/Thumbs Down support
-
-Uses a KMS/CMK to encrypt messages before sending them to Firehose
+*Thumbs Up/Thumbs Down support*
+- Uses a KMS/CMK to encrypt messages before sending them to Firehose
 
 ### ExamplePythonLambdaNext 
-
-Demonstrates branching questions – going to the next step in a branched workflow
+*Demonstrates branching questions – going to the next step in a branched workflow*
 
 ### ExamplePythonLambdaPrevious 
-
-Demonstrates branching questions – going to the next step in a branched workflow
+*Demonstrates branching questions – going to the next step in a branched workflow*
 
 ### ExamplePythonLambdahello
-
-This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.
+*This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.*
 
 ### ExampleS3ListPhotoLambda 
 
 ### ExampleLambdaRole
 
 ### ExampleJSLambdaHook 
-
-This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.
+*This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.*
 
 ## KendraCrawlerRole
 
-### KendraCrawler 
-
-Reads settings from ParameterStore
-
-Dynamically changes the EventBridge KendraCrawlerRule based on a setting
-
-Creates custom Kendra Data Source and indexes web pages
+### KendraCrawlerLambda 
+*Supports indexing web pages*
+- Reads settings from ParameterStore
+- Dynamically changes the EventBridge KendraCrawlerRule based on a setting
+- Creates custom Kendra Data Source and indexes web pages
 
 ## ExtensionLambdaRole
 
-This role will be used for all “extensions” to the question processing pipeline. Currently we have the Lambda(s) below configured
+*This role will be used for all “extensions” to the question processing pipeline. Currently we have the Lambda(s) below configured*
 
 ### KendraFallback
+*When enabled, if a question cannot be answered via the ElasticSearch query, QnABot searches the configured Kendra index(es)*
 
-When enabled, if a question cannot be answered via the ElasticSearch query, QnABot searches the configured Kendra index(es)
-
-Uses XRay for request tracing
-
-When configured via the PublicOrPrivate CF parameter, it is attached to a VPC
-
-Translates questions and answers between English and the users’s native language
+- Uses XRay for request tracing
+- When configured via the PublicOrPrivate CF parameter, it is attached to a VPC
+- Translates questions and answers between English and the users’s native language
 
 ### EXTCustomPyHook 
-
-Sample custom python Lambda hook
+*Sample custom python Lambda hook*
 
 ## S3ListLambdaRole
 
 ### ExampleS3ListLambda
 
-Some of our samples embed images.  ExampleS3ListLambda provides endpoints to the images in S3 via APIGW
+*Some of our samples embed images.  ExampleS3ListLambda provides endpoints to the images in S3 via APIGW*
 
 ### S3ListLambda 
 
-Users can import example files in the Content Designer stored on S3. This Lambda returns the URL of the API Gateway S3 proxy request to retrieve the file.
+*Users can import example files in the Content Designer stored on S3. This Lambda returns the URL of the API Gateway S3 proxy request to retrieve the file.*
 
 ## ExportRole
 
 ### ExportStepLambda
 
-Used as part of the export questions functionality.
+*Used as part of the export questions functionality.*
 
 ## KendraSyncRole
 
 ### KendraSyncLambda
 
-Syncs curated questions stored in ElasticSearch to Kendra FAQ
+*Syncs curated questions stored in ElasticSearch to Kendra FAQ*
 
-Reads settings from ParameterStore
-
-Reads JSON FAQ file from S3
-
-Syncs JSON FAQ file to Kendra FAQ
-
-When calling Kendra to sync FAQs, a role needs to be passed to the command to allow access to S3. This role needs “iam:passRole” permission
+- Reads settings from ParameterStore
+- Reads JSON FAQ file from S3
+- Syncs JSON FAQ file to Kendra FAQ
+- When calling Kendra to sync FAQs, a role needs to be passed to the command to allow access to S3. This role needs “iam:passRole” permission
 
 ## TranslateRole
-
 ### TranslateLambda
 
-used to managed importing Translate Custom Terminologies
-
+- Used to managed importing Translate Custom Terminologies
 ## ConnectRole
-
 ### ConnectLambda
 
-Supports the Connect wizard. 
-
-processes and writes locally stored Connect Call Flows to S3
-
-Lambda Write permission (Not needed – SIM created in open source backlog)
+- Supports the Connect wizard. 
+- processes and writes locally stored Connect Call Flows to S3
+- Lambda Write permission (Not needed – SIM created in open source backlog)
 
 ## FullfillmentLambdaRole
 
 ### FullfillmentLambda
-
-Orchestrates processing pipeline for questions and answers
-
-Lex (See services section)
-
-Lambda Write – calls other Lambdas
-
-Comprehend (see Services section)
-
-Kendra (see Service section)
-
-S3
-
-DynamoDB (see Services section)
-
-Parameter Store (see Services section)
+*Orchestrates processing pipeline for questions and answers*
+- Lex (See services section)
+- Lambda Write – calls other Lambdas
+- Comprehend (see Services section)
+- Kendra (see Service section)
+- S3
+- DynamoDB (see Services section)
+- Parameter Store (see Services section)
 
 ## ImportRole
 
 ### ImportStartLambda
-
-Starts the import question and answer process 
+*Starts the import question and answer process*
 
 ### ImportStepLambda
-
-Supports the import question process in the Content Designer
-
-Reads the question file from S3
-
-Writes a status file that is retrieve via an API GW S3  Proxy
+*Supports the import question process in the Co*tent Designer*
+- Reads the question file from S3
+- Writes a status file that is retrieve via an API GW S3  Proxy
 
 ## LexBuildLambdaRole
 
 ### LexBuildLambda 
-
-Generates additional NLP training data for Lex using questions from questions added via the content designer
-
-Reads questions from ElasticSearch to rebuild Lex model
+*Generates additional NLP training data for Lex using questions from questions added via the content designer*
+- Reads questions from ElasticSearch to rebuild Lex model
 
 ### LexBuildLambdaPoll 
+*Polls Lex service to determine build completion status*
 
-Polls Lex service to determine build completion status
-
-Stores status file in S3 read by API GW S3 proxy endpoint.
+- Stores status file in S3 read by API GW S3 proxy endpoint.
 
 ### LexBuildLambdaStart 
-
-Starts Lex Rebuild process
-
-Stores status file in S3 read by API GW S3 proxy endpoint
-
+*Starts Lex Rebuild process*
+- Stores status file in S3 read by API GW S3 proxy endpoint
 ## LexProxyLambdaRole
 
 ### LexProxyLambda
 
-Proxies Lex requests from API Gateway to Lex
+- Proxies Lex requests from API Gateway to Lex
 
 ### LexStatusLambda 
 
@@ -394,16 +338,12 @@ Reads status of the Lex Build process from status file S3 object and returns the
 ### SchemaLambdaRole
 
 ## SchemaLambda 
-
-Supports the quiz functionality
-
-ElasticSearchService
+*Supports the quiz functionality*
+- ElasticSearchService
 
 ## TestAllRole
 
 ### TestAllStepLambda 
-
-Supports “Test All Questions” step in the Content Designer
-
-Calls other Lambdas as needed to test questions and answers
+*Supports “Test All Questions” step in the Content Designer*
+- Calls other Lambdas as needed to test questions and answers
 
