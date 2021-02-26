@@ -18,11 +18,11 @@
 | CUSTOM_TERMINOLOGY_SOURCES | comma separated list | If configured only the terminologies specified will be used.
 | MINIMUM_CONFIDENCE_SCORE | decimal between 0.0 and 0,99 | TODO
 | ALT_SEARCH_KENDRA_INDEXES | An Array of comma separated Ids |  A list of one or more [Amazon Kendra](https://aws.amazon.com/kendra/) indexes used for Kendra fallback
-| ALT_SEARCH_KENDRA_S3_SIGNED_URLS | true or false | Enables (signed S3)[https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html] Urls for Amazon Kendra results.  If enabled, allows support for Kendra documents which are not publicly accessible. 
+| ALT_SEARCH_KENDRA_S3_SIGNED_URLS | true or false | Enables [signed S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html) Urls for Amazon Kendra results.  If enabled, allows support for Kendra documents which are not publicly accessible. 
 | ALT_SEARCH_KENDRA_S3_SIGNED_URL_EXPIRE_SECS | integer | Determines length of time in seconds before a signed S3 Url returned by an Amazon Kendra response is invalid (TODO Wording)
 | ALT_SEARCH_KENDRA_MAX_DOCUMENT_COUNT | integer | Number of documents returned by Amazon Kendra fallback
-| ALT_SEARCH_KENDRA_TOP_ANSWER_MESSAGE | string | Heading when the (top answer)[https://docs.aws.amazon.com/kendra/latest/dg/response-types.html] is found by Amazon Kendra 
-| ALT_SEARCH_KENDRA_ANSWER_MESSAGE | string | Heading when a (Document)[https://docs.aws.amazon.com/kendra/latest/dg/response-types.html] is returned by Amazon Kendra
+| ALT_SEARCH_KENDRA_TOP_ANSWER_MESSAGE | string | Heading when the [top answer](https://docs.aws.amazon.com/kendra/latest/dg/response-types.html) is found by Amazon Kendra 
+| ALT_SEARCH_KENDRA_ANSWER_MESSAGE | string | Heading when a [Document](https://docs.aws.amazon.com/kendra/latest/dg/response-types.html) is returned by Amazon Kendra
 | KENDRA_FAQ_INDEX | Kendra Index Id | Kendra Index to use sync Elastic Search questions and answers 
 | KENDRA_FAQ_CONFIG_MAX_RETRIES | integer | Number of times to retry syncing FAQ's when a throttling error occurs
 | KENDRA_FAQ_CONFIG_RETRY_DELAY | integer | Amount of time to wait in seconds between attempts to retry syncing 
@@ -53,9 +53,9 @@
 | REDACTING_REGEX | regex expression | Redacts expressions matching regex from logs
 | PII_REJECTION_ENABLED | true or false | Enables PII Rejection
 | PII_REJECTION_QUESTION | text  | If PII is found, the user's request (question) will change to this phrase
-| PII_REJECTION_WITH_COMPREHEND: | true or false | Enable's (Personal Identifiable Information)[https://aws.amazon.com/blogs/machine-learning/detecting-and-redacting-pii-using-amazon-comprehend/] detection with Amazon Comprehend
+| PII_REJECTION_WITH_COMPREHEND: | true or false | Enable's [Personal Identifiable Information](https://aws.amazon.com/blogs/machine-learning/detecting-and-redacting-pii-using-amazon-comprehend/) detection with Amazon Comprehend
 | PII_REJECTION_REGEX | regex expression | Used to find PII based on a regex
-| PII_REJECTION_IGNORE_TYPES | comma separated list of (PII Entity Categories)[https://aws.amazon.com/blogs/machine-learning/detecting-and-redacting-pii-using-amazon-comprehend/] | Do not detect the specified list of entity types
+| PII_REJECTION_IGNORE_TYPES | comma separated list of [PII Entity Categories](https://aws.amazon.com/blogs/machine-learning/detecting-and-redacting-pii-using-amazon-comprehend/) | Do not detect the specified list of entity types
 | DISABLE_CLOUDWATCH_LOGGING | true or false | Disable all logging in fulfillment es query handler lambda. does not disable logging from Lambda Hooks or Conditional Chaining Lambda functions
 | MINIMAL_ES_LOGGING | true or false | do not log utterances or session attributes to elasticsearch for kibana logging
 | S3_PUT_REQUEST_ENCRYPTION | text | enable header x-amz-server-side-encryption header and set with this value
