@@ -1,4 +1,4 @@
-* Roles
+# Roles
 Master Stack - 20
 
 Example Stack - 2
@@ -13,13 +13,13 @@ Bootstrap  (separate stack used for deployments) - 1
 
 Total - 30
 
-* Resources
-** Cognito 
+# Resources
+## Cognito 
 User Pool - authenticated login to Content Designer
 
 Identity Pool - supports API Gateway IAM authentication when calling supported Lambdas
 
-** S3
+## S3
 
 AssetBucket - additional components used to extend QnABot
 
@@ -35,7 +35,7 @@ TestAllBucket - Results from “Test all” functionality
 
 Bucket - HTML/CSS/Javascript used by the Content Designer
 
-** APIGateway
+## APIGateway
 
 Lambda 
 
@@ -43,44 +43,44 @@ S3
 
 SNS - APIGW has a 30 second timeout. The Kendra web crawler takes longer than 30 seconds.  The Content Designer calls the Crawler API to trigger an SNS message that starts the crawler Lambda
 
-** DynamoDB
+## DynamoDB
 Stores user session information.
 
-** ElasticSearch
+## ElasticSearch
 Stores curated questions and answers
 
 Stores usage metrics
 
-** Lambda (42 functions)
+## Lambda (42 functions)
 - Master 21
 - Example  13
 - Export 6
 - Import 2
 
 
-** Lex
+## Lex
 The chatbot engine
 
-** SNS
+## SNS
 APIGW has a 30 second timeout. The Kendra web crawler takes longer than 30 seconds.  The Content Designer calls the Crawler API to trigger an SNS message that starts the crawler Lambda
 
-** KMS
+## KMS
 There is an optional utility script which adds KMS/CMK encryption to many resources.  The list below is for the default use cases
 
 The quiz workflow - not used by RhodeIsland
 
-** CloudWatch Events
+## CloudWatch Events
 
 KendraCrawlerRule - Schedules the Kendra Crawler based on setting
 
 CloudWatchEventRule - triggered when the Parameter Store custom setting is changed. It in turns triggers the KendraCrawler Lambda that configures the KendraCrawlerRule to schedule the crawler to run
 
-** CloudWatch Logs
+## CloudWatch Logs
 Lambda 
 
 Kendra
 
-** Comprehend
+## Comprehend
 Sentiment Analysis - detects whether a question was positive, negative, neutral or mixed
 
 Language Detection - detects the user’s language, translates the text to English and translates the response from English to the user’s language
@@ -89,47 +89,47 @@ Analyze Syntax - detects parts of speech in a sentence and searches for question
 
 PII Detection - detects whether a question contains Personally Identifiable Information and allows an administrator  to instruct QnABot to reject a question that contains certain types of PII.
 
-** Kendra
+## Kendra
 Kendra FAQ - Questions entered into QnABot are synchronized with Kendra FAQ for better matching
 
 Kendra Documents - QnABot has an integrated web crawler, web page contents are indexed with Kendra
 
-** Parameter Store
+## Parameter Store
 DefaultQnABotSettings - default settings for QnABot
 
 CustomQnABotSettings - any settings that are changed from the default by the user.  QnABot merges DefaultQnABotSettings and CustomQnABotSettings at runtime
 
-** S3
+## S3
  Static assets (HTML, CSS, JavaScript)  related to the Content Designer
 
 Holding area for data transfers between different processes
 
-** Translate
+## Translate
 
 Translates user’s questions to and from English as necessary
 
 Custom Terminology - An administrator can import a CSV file with language pairs to override default translations
 
-** Polly
+## Polly
 
 Convert voice to text
 
 Convert text to voice
 
-** Kinesis Firehose
+## Kinesis Firehose
 
 Transfers messages from fulfillment lambda to Kinesis Firehose to the ElasticSearch index for Kibana and S3.
 
 Used to store feedback from the client to Kibana
 
 
-* Roles
+# Roles
 
-** CFNLambdaRole (Bootstrap Stack)
+## CFNLambdaRole (Bootstrap Stack)
 
 Deletes the objects from S3 to allow the bucket to be deleted when the stack is deleted
 
-** CFNLambdaRole (QnABot Stack)
+## CFNLambdaRole (QnABot Stack)
 
 CFNLambda
 
@@ -153,7 +153,7 @@ ExampleWriteLambda
 
 This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.
 
-** EXTUiImportLambda 
+## EXTUiImportLambda 
 
 Custom CF resource that expands resources for custom extensions packages - in the Imports section of Tools
 
@@ -161,7 +161,7 @@ VersionLambda
 
 Reads version of file based on CF parameter
 
-** ESProxyLambdaRole
+## ESProxyLambdaRole
 
 ESProxyLambda
 
@@ -177,7 +177,7 @@ Uses Kendra FAQ feature (see above)
 
 Supports “Rebuild Lex” functionality
 
-Uses Polly*
+Uses Polly#
 
 Uses KMS  to decrypt sessions encrypted by the quiz functionality 
 
@@ -201,13 +201,13 @@ UtteranceLambda
 
 Returns slot types from the LexBot
 
-** ESLoginLambdaRole
+## ESLoginLambdaRole
 
 ESLoggingLambda
 
 Sends events to ElasticSearch using Firehose 
 
-** ExampleLambdaRole
+## ExampleLambdaRole
 
 ExampleJSLambdaQuiz 
 
@@ -243,13 +243,13 @@ This lambda contains a collection of lambda hooks for QnABot and a custom resour
 
 ExampleS3ListPhotoLambda 
 
-** ExampleLambdaRole
+## ExampleLambdaRole
 
 ExampleJSLambdaHook 
 
 This lambda contains a collection of lambda hooks for QnABot and a custom resource to create the example documents.
 
-** KendraCrawlerRole
+## KendraCrawlerRole
 
 KendraCrawler 
 
@@ -259,7 +259,7 @@ Dynamically changes the EventBridge KendraCrawlerRule based on a setting
 
 Creates custom Kendra Data Source and indexes web pages
 
-** ExtensionLambdaRole
+## ExtensionLambdaRole
 
 This role will be used for all “extensions” to the question processing pipeline. Currently we have the Lambda(s) below configured
 
@@ -277,7 +277,7 @@ EXTCustomPyHook
 
 Sample custom python Lambda hook
 
-** S3ListLambdaRole
+## S3ListLambdaRole
 
 ExampleS3ListLambda
 
@@ -287,13 +287,13 @@ S3ListLambda
 
 Users can import example files in the Content Designer stored on S3. This Lambda returns the URL of the API Gateway S3 proxy request to retrieve the file.
 
-** ExportRole
+## ExportRole
 
 ExportStepLambda
 
 Used as part of the export questions functionality.
 
-** KendraSyncRole
+## KendraSyncRole
 
 KendraSyncLambda
 
@@ -307,13 +307,13 @@ Syncs JSON FAQ file to Kendra FAQ
 
 When calling Kendra to sync FAQs, a role needs to be passed to the command to allow access to S3. This role needs “iam:passRole” permission
 
-** TranslateRole
+## TranslateRole
 
 TranslateLambda
 
 used to managed importing Translate Custom Terminologies
 
-** ConnectRole
+## ConnectRole
 
 ConnectLambda
 
@@ -323,7 +323,7 @@ processes and writes locally stored Connect Call Flows to S3
 
 Lambda Write permission (Not needed – SIM created in open source backlog)
 
-** FullfillmentLambdaRole
+## FullfillmentLambdaRole
 
 FullfillmentLambda
 
@@ -343,7 +343,7 @@ DynamoDB (see Services section)
 
 Parameter Store (see Services section)
 
-** ImportRole
+## ImportRole
 
 ImportStartLambda
 
@@ -357,7 +357,7 @@ Reads the question file from S3
 
 Writes a status file that is retrieve via an API GW S3  Proxy
 
-** LexBuildLambdaRole
+## LexBuildLambdaRole
 
 LexBuildLambda 
 
@@ -401,7 +401,7 @@ Supports the quiz functionality
 
 ElasticSearchService
 
-** TestAllRole
+## TestAllRole
 
 TestAllStepLambda 
 
