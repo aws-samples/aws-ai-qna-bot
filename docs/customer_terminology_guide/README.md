@@ -45,5 +45,7 @@ Go to settinga in the **Tools** menu and enable custom terminology sources
 
 ![](./settings.png)
 
+And now let's ask the question again, and see that our file worked...
+
 ![](./custom_terminology_enabled.png)
 
