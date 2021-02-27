@@ -52,6 +52,7 @@ function get_keywords(params) {
         var contraction_list = JSON.parse(params.es_expand_contractions)
 
     }catch{
+        console.log("Imporoperly formatted JSON in ES_EXPAND_CONTRACTIONS: " + params.es_expand_contractions)
         contraction_list = {}
     }
     var new_question = "";
@@ -59,17 +60,16 @@ function get_keywords(params) {
     for(var word of params.question.split(" "))
     {
         for(var contraction in contraction_list )
-        {
+        {   
+            new_word = ""
             if(word.toLowerCase() == contraction.toLowerCase() || word.toLowerCase() == contraction.toLowerCase().replace("'","’")){
                 new_word = contraction_list[contraction];
                 break;
-            }else{
-                new_word = word
             }
         }
-        new_question += " " + new_word 
+        new_question += " " + (new_word != "" ? new_word : word);
     }
-    console.log("Question after expansion " + new_question)
+    console.log("Question after expanding contractions" + new_question)
     params.question = new_question
 
 
