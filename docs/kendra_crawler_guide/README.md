@@ -1,6 +1,6 @@
 # Kendra Web Indexer Integration
 
-Please read the [Kendra Integration](../../workshops/kendra/README.md) for instructions on configuring Kendra
+Please read the [Kendra Integration](../../workshops/kendra/README.md) for instructions about configuring Kendra
 
 
 
