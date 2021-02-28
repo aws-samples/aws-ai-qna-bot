@@ -340,7 +340,6 @@ async function routeKendraRequest(event, context) {
                     }
                     
                     // Convert S3 Object URLs to signed URLs
-                    let uri = element.DocumentURI ;
                     answerDocumentUris.add(element);
                     kendraQueryId = res.QueryId; // store off the QueryId to use as a session attribute for feedback
                     kendraIndexId = res.originalKendraIndexId; // store off the Kendra IndexId to use as a session attribute for feedback
@@ -401,7 +400,7 @@ async function routeKendraRequest(event, context) {
                         }
                     }
                   // but even if topAnswer is found, show URL in markdown
-                  docInfo.uri = element.DocumentURI;
+                  docInfo.uri = `<span translate=no>${element.DocumentURI}</span>`;
                   let title;
                   if (element.DocumentTitle && element.DocumentTitle.Text) {
                     docInfo.Title = element.DocumentTitle.Text;
@@ -445,7 +444,7 @@ async function routeKendraRequest(event, context) {
       answerDocumentUris.forEach(function(element) {
         // Convert S3 Object URLs to signed URLs
         if (signS3Urls) {
-          element.DocumentURI = signS3URL(element.DocumentURI, expireSeconds);
+          element.DocumentURI = `<span translate=no>${signS3URL(element.DocumentURI, expireSeconds)}</span>`;
         }
         event.res.session.appContext.altMessages.markdown += `[${element.DocumentTitle.Text}](${element.DocumentURI})`;
       });
