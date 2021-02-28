@@ -400,7 +400,7 @@ async function routeKendraRequest(event, context) {
                         }
                     }
                   // but even if topAnswer is found, show URL in markdown
-                  docInfo.uri = `<span translate=no>${element.DocumentURI}</span>`;
+                  docInfo.uri = `${element.DocumentURI}`;
                   let title;
                   if (element.DocumentTitle && element.DocumentTitle.Text) {
                     docInfo.Title = element.DocumentTitle.Text;
@@ -444,9 +444,9 @@ async function routeKendraRequest(event, context) {
       answerDocumentUris.forEach(function(element) {
         // Convert S3 Object URLs to signed URLs
         if (signS3Urls) {
-          element.DocumentURI = `<span translate=no>${signS3URL(element.DocumentURI, expireSeconds)}</span>`;
+          element.DocumentURI = signS3URL(element.DocumentURI, expireSeconds);
         }
-        event.res.session.appContext.altMessages.markdown += `[${element.DocumentTitle.Text}](${element.DocumentURI})`;
+        event.res.session.appContext.altMessages.markdown += `<span translate=no>[${element.DocumentTitle.Text}](${element.DocumentURI})</span>`;
       });
     }
     
@@ -467,7 +467,7 @@ async function routeKendraRequest(event, context) {
                 if (signS3Urls) {
                     element.uri = signS3URL(element.uri, expireSeconds)
                 }
-                event.res.session.appContext.altMessages.markdown += `\n\n  ${helpfulLinksMsg}: [${label}](${element.uri})`;
+                event.res.session.appContext.altMessages.markdown += `\n\n  ${helpfulLinksMsg}: <span translate=no>[${label}](${element.uri})</span>`;
             }
         });
     }
