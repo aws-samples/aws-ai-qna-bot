@@ -34,7 +34,6 @@ async function get_translation(englishText, targetLang,req){
     const translateClient = new AWS.Translate();
     try {
         var customTerminologyEnabled = _.get(req._settings,"ENABLE_CUSTOM_TERMINOLOGY") == true;
-        var customTerminologies = _.get(req._settings,"CUSTOM_TERMINOLOGY_SOURCES","").split(",");
         console.log("get translation request " + JSON.stringify(req))
 
         const params = {
@@ -44,12 +43,8 @@ async function get_translation(englishText, targetLang,req){
         };
         if(customTerminologyEnabled){
             customTerminologies = await get_terminologies("en",customTerminologies)
+            params["TerminologyNames"] = customTerminologies;
 
-            if(customTerminologies.length == 0){
-                console.log("Warning: ENABLE_CUSTOM_TERMINOLOGY is set to true, but no entries found for CUSTOM_TERMINOLOGY_SOURCES ")
-            }else{
-                params["TerminologyNames"] = customTerminologies;
-            }
         }
     
         console.log("input text:", englishText);

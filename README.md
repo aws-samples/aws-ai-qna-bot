@@ -208,7 +208,6 @@ import only supports custom terminology files in CSV format (https://docs.aws.am
 Two settings have been added:
 
 * ENABLE_CUSTOM_TERMINOLOGY - when the value is "true", QnABot will use installed custom terminologies for both questions and answers.
-* CUSTOM_TERMINOLOGY_SOURCES -  if left blank, all custom terminologies in your account will be used.  If you specify one or more custom terminologies separated by spaces, only the terminology files specified will be used.
 
 Improved handling for contractions.
 

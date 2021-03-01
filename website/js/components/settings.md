@@ -15,7 +15,6 @@
 | ENABLE_SENTIMENT_SUPPORT | true or false | Enables [Amazon Comprehend](TODO include link) be used for sentiment analysys
 | ENABLE_MULTI_LANGUAGE_SUPPORT | true or false | Enable or Disable Amazon Translate support
 | ENABLE_CUSTOM_TERMINOLOGY| true or false |  Enable support for installed [Custom Terminology](https://aws.amazon.com/blogs/machine-learning/introducing-amazon-translate-custom-terminology/) files when using Amazon Translate
-| CUSTOM_TERMINOLOGY_SOURCES | comma separated list | If configured only the terminologies specified will be used.
 | MINIMUM_CONFIDENCE_SCORE | decimal between 0.0 and 0,99 | TODO
 | ALT_SEARCH_KENDRA_INDEXES | An Array of comma separated Ids |  A list of one or more [Amazon Kendra](https://aws.amazon.com/kendra/) indexes used for Kendra fallback
 | ALT_SEARCH_KENDRA_S3_SIGNED_URLS | true or false | Enables [signed S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html) Urls for Amazon Kendra results.  If enabled, allows support for Kendra documents which are not publicly accessible. 
