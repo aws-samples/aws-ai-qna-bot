@@ -6,7 +6,10 @@
           v-card-title.display-1.pa-2 Import Translate Custom Terminologies
           v-card-text
             h3 For more information about Amazon Translate custom terminologies, see <a href="https://github.com/aws-samples/aws-ai-qna-bot/blob/master/docs/customer_terminology_guide/README.md" target="_blank">here</a>
-          v-card-text
+          v-card-text(v-if="!IsCustomTerminologyEnabled")
+            p Set ENABLE_CUSTOM_TERMINOLOGY to true in settings to enable the use of terminology files for Amazon Translate
+
+          v-card-text(v-if="IsCustomTerminologyEnabled") 
             p {{importWarning}}  
             p.title From File
             <span>Description:</span>
@@ -23,7 +26,7 @@
               )
             <br/>
             p {{uploadStatus}}
-      v-flex(v-if="jobs.length>0")
+      v-flex(v-if="jobs.length>0 && IsCustomTerminologyEnabled")
         v-card(id="import-jobs")
           v-card-title.headline Installed Translate Custom Terminologies
           v-card-text
@@ -82,12 +85,20 @@ module.exports={
       description:null,
       jobs:[],
       examples:[],
-      uploadStatus:""
+      uploadStatus:"",
+      IsCustomTerminologyEnabled: false,
+
     }
   },
   components:{
   },
   computed:{
+  },
+  updated: function () {
+    var self = this;
+    this.CustomTerminologyIsEnabled().then((data) => {
+      self.IsCustomTerminologyEnabled = data;
+    });
   },
   created:async function(){
     this.refresh()
@@ -95,7 +106,12 @@ module.exports={
     this.examples=examples
   },
   methods:{
-
+    CustomTerminologyIsEnabled: async function(){
+        const settings=await this.$store.dispatch('api/listSettings');
+        console.log(JSON.stringify(settings));
+        return _.get(settings[2],"ENABLE_CUSTOM_TERMINOLOGY")=="true"
+    },
+    
     close:function(){
       this.loading=false
       this.error=false
