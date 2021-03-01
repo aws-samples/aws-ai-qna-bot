@@ -42,7 +42,7 @@ async function get_translation(englishText, targetLang,req){
             Text: englishText, /* required */
         };
         if(customTerminologyEnabled){
-            customTerminologies = await get_terminologies("en",customTerminologies)
+            var customTerminologies = await get_terminologies("en",customTerminologies)
             params["TerminologyNames"] = customTerminologies;
         }
     

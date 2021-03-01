@@ -51,7 +51,7 @@ async function get_translation(inputText, sourceLang, targetLang,req ) {
 
 
         console.log("Custom terminology enabled")
-        customTerminologies = await get_terminologies(sourceLang,customTerminologies)
+        var customTerminologies = await get_terminologies(sourceLang,customTerminologies)
 
         console.log("Using custom terminologies " + JSON.stringify(customTerminologies))
         params["TerminologyNames"] = customTerminologies;

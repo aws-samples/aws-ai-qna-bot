@@ -67,7 +67,7 @@ async function get_translation(inputText, sourceLang, targetLang,req ) {
         return inputText;
     }
     if(customTerminologyEnabled){
-        customTerminologies = await get_terminologies(sourceLang,customTerminologies)
+        var customTerminologies = await get_terminologies(sourceLang,customTerminologies)
         params["TerminologyNames"] = customTerminologies;
     }
 
